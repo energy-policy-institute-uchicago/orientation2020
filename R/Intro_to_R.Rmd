@@ -1,0 +1,459 @@
+---
+title: "EPIC Orientation 2018: Introduction to R"
+date: "Updated: `r format(Sys.Date(), format = '%d %B %Y')`" 
+output:
+  html_document:
+    theme: default
+    highlight: zenburn
+  md_document: default
+  variant: markdown_github
+github_document: default
+number_sections: true
+---
+
+## Overview
+1. Importing data
+2. R Data Types
+3. Working with dataframes
+4. Data Manipulation with dplyr 
+5. Reshaping data with tidyr
+6. Vectorized functions 
+7. Data Visualization using ggplot2
+8. Fitting Linear Models
+
+## 1. Importing data
+For starters, we will be working with `tv_hurricanes_by_network.csv`, which contains the percentage of TV news that mention Hurricanes Harvey, Irma, Jose, and Maria each day.
+
+Source: https://github.com/fivethirtyeight/data/tree/master/puerto-rico-media
+
+Let's get started.
+```{r}
+#clean environment
+rm(list = ls())
+
+#to get current working directory
+getwd() 
+
+#to get help for a function
+#Method 1:
+help("read.csv") 
+#Method 2:
+?"read.csv"
+
+#import csv
+df <- read.csv("datasets/tv_hurricanes_by_network.csv")
+```
+
+R also has the capability to import other file formats including Stata, SPSS, SAS and Excel files using functions such as `read.spss()`, `read.dta()`, and `read.xport()`. You may wish to explore the `foreign` package to find out more. 
+
+## 2. R Data Types
+
+You will encounter a variety of data structures in R:
+
+* #### vector
+    + a one-dimensional array
+    + elements of a vector must be of the same type
+      + `numeric <- c(0.1, 2.2. 4.678)`
+      + `integer <- c(5, 10, 100)`
+      + `character <- c("EPIC", "is", "epic!")`
+      + `logical <- c(T, F, T, T)`
+* #### factors
+    + special vectors that contain categorical values 
+    + nominal values as a vector of integers and an internal vector of character strings mapped to these integers
+* #### matrix
+    + a special type of vector which has multiple dimensions 
+    + all columns in a matrix must be of the same type (numeric, character, etc.) and the same length
+* #### dataframe
+    + more general than a matrix, different columns can have different modes (numeric, character, factor, etc.)
+* #### list
+    + an ordered collection of objects (components), a list allows you to gather (possibly unrelated) objects under one name (e.g. a string, a numeric vector, a matrix, and a scalar)  e.g. `mylist <- list("Hello", c(1,2,5.3,6,-2,4), matrix(1:20, nrow=5,ncol=4), 9)`
+    + you can also make lists of lists e.g. `mylist <- list(list1, list2, list3)`
+
+Let's examine our data.
+
+```{r}
+#see structure of object
+str(df)
+```
+
+```{r}
+#see class of a variable
+class(df$Query)
+```
+
+R is currently treating the Query variable as nominal, let's change it to a character type.
+```{r}
+#change Query variable to a character type
+df$Query <- as.character(df$Query) 
+#see structure
+str(df)
+```
+
+## 3. Working with Dataframes
+Sometimes we deal with large dataframes and we don't always get the luxury of viewing it in its entirety. Instead, we can use the following functions:
+```{r}
+#see dimensions (in this order: row, column)
+dim(df)
+#view the first 2 obs
+head(df, 2)
+#view the last 3 obs
+tail(df, 3)
+#summary statistics
+summary(df)
+```
+
+To access specific columns or rows by name or index:
+```{r}
+#Get the 2nd observation of the Query Variable
+df[2, 'Query'] #Method 1
+df$Query[2] #Method 2
+#Get the 3rd observation of the 5th variable
+df[3,5]
+#Grab multiple elements (from the 1st & 2nd rows, 4th & 5th columns)
+df[c(1,2), c(4,5)]
+```
+
+
+You can also perform functions or use operators on vectors
+```{r}
+#Find the minimum value of CNN
+min(df$CNN) 
+#Sum of all obs in BBC.News
+sum(df$BBC.News)
+#Standard deviation of Fox News
+sd(df$FOX.News)
+#Multiple CNN by 2
+df$CNN.times.2 <- df$CNN*2
+#Remove this newly created column
+df$CNN.times.2 <- NULL
+#Add variables together
+df$CNN.plus.BBC <- df$CNN + df$BBC.News
+#Convert Date variable from Factor to Date format
+df$Date <- as.Date(df$Date, format = "%m/%d/%y")
+#Tabulate the Query variable, how many observations are Hurricane Irma?
+table(df$Query)
+```
+
+There are several ways to rename a column. For instance, if we'd like to rename the "Query"" column to "Hurricane"
+```{r}
+#view all variable names in df
+names(df)
+#Method 1: rename the second variable, aka Query
+names(df)[2] <- "HURRICANE" #Method 1
+#Method 2: rename based on the name
+names(df)[names(df)=="HURRICANE"] <- "Hurricane"
+#view all variable names in df again
+names(df)
+#Method 3: use rename() from the dplyr package which we will cover later
+```
+
+### Quiz 1: 
+Create a numeric variable that assigns the following damage costs to each of the hurricanes. Name this variable `Costs` and use millions as the unit. 
+
+* Harvey: $125Bn
+* Maria: $90Bn
+* Irma: $64.8Bn
+* Jose: $2.8M
+
+##### *“If you look for it, I've got a sneaky feeling you'll find that love actually is all around.” - Prime Minister David (Hugh Grant)*
+
+```{r}
+df$Costs[df$Hurricane=="Hurricane Harvey"] <- 125 * 1000
+df$Costs[df$Hurricane=="Hurricane Irma"] <- 64.8 * 1000
+df$Costs[df$Hurricane=="Hurricane Maria"] <- 90 * 1000
+df$Costs[df$Hurricane=="Hurricane Jose"] <- 2.8
+```
+
+## 4. Data Manipulation with dplyr 
+
+#### What's dplyr?
+dplyr is a powerful package written by the amazing Hadley Wickham. It provides some easy-to-use functions for data analysis and manipulation.
+
+```{r}
+#install package
+#install.packages("dplyr")
+#load this package in your R environment
+library(dplyr)
+```
+
+Now let's try out some of the most commonly-used functions.
+
+* `select()` - select specific columns 
+* `mutate()` - create a new column
+* `rename()` - rename columns 
+* `filter()` - select rows using a criteria
+* `arrange()` - arrange rows
+* `group_by()` - group data
+* `summarise()` - summarize values
+
+`select()` allows you to select specific columns from your dataframe.
+
+```{r}
+#select just the Date and CNN columns and display the first 3 observations
+#my R is buggy but you should be able to run just this: head(select(df, Date, CNN))
+head(dplyr::select(df, Date, CNN), 3)
+```
+`mutate()` allows you to create new variables
+
+```{r}
+#create a new column called BBC.and.CNN and display just the first 3 rows
+head(mutate(df, BBC.and.CNN=BBC.News+CNN), 3)
+```
+`rename()` allows you to rename variables.
+```{r}
+#change the variable name BBC.News to just BBC and FOX.News to just FOX
+#again, my R is buggy but you should be able to run just this: head(rename(df, c("BBC.News" = "BBC", "FOX.News" = "FOX")),3)
+head(plyr::rename(df, c("BBC.News" = "BBC", "FOX.News" = "FOX")),3)
+```
+
+`filter()` allows you to select specific observations using conditions
+```{r}
+#find the first 3 observations where CNN has a value of < 0.1 and MSNBC < 0.02
+head(filter(df, CNN < 0.1 & MSNBC < 0.02),3)
+```
+
+`arrange()` allows you to rearrange rows 
+```{r}
+#arrange rows according to Dates (in ascending order), then Hurricane
+head(arrange(df, Date, Hurricane), 3)
+```
+
+`group_by()` uses a **split-apply-combine** concept. To break it down, we want to **split** the dataframe into groups by some variable you've specified, **apply** a function to these groups, and **combine** them again. Let's try this with the `summarise()` function.
+
+```{r}
+#Find out the mean news coverage in CNN by hurricane groups
+df %>%
+  group_by(Hurricane) %>%
+  summarise(mean.coverage = mean(CNN))
+```
+
+#### What is this `%>%` symbol?
+This is known as a **pipe operator**, which allows you to pipe the output from one function to the input of another function. This saves you from long, nested operations or doing a bunch of assignments. 
+
+Without the pipe operator, you could also execute the previous script with a long, nested operation (too confusing):
+```{r}
+summarise(group_by(df, Hurricane), mean.coverage = mean(CNN))
+```
+
+Or using multiple assignments (too tedious):
+```{r}
+test <- group_by(df, Hurricane)
+test <- summarise(test, mean.coverage = mean(CNN))
+```
+
+### Quiz 2: 
+Using a combination of the functions we've covered, find out the average coverage of MSNBC for each hurricane, only include hurricanes where damage costs were above 10 million. Remember to use the pipe operator :D
+
+```{r}
+df %>%
+  filter(Costs > 10) %>%
+  group_by(Hurricane) %>%
+  summarise(max.coverage = max(MSNBC)) %>%
+  arrange(max.coverage)
+  
+```
+
+Just to make a point, if you **didn't** use the pipe operator, a nested operation would have looked like this (don't do it).
+```{r}
+arrange(summarise(group_by(filter(df, Costs > 10), Hurricane), max.coverage = max(MSNBC)), max.coverage)
+```
+
+## 5. Reshaping data with tidyr 
+
+#### What's tidyr?
+The most commonly used functions in this package are `gather()` and `spread()`, which help us reshape our data. Our data currently has 4 separate columns for news coverage, one for each TV station. What if we wanted to restructure our data from a **wide to long** format, so the data of all 4 TV stations can be in a single variable?
+
+```{r}
+#install.packages("tidyr")
+library(tidyr)
+#reshape from wide to long
+plot_df <- gather(df, 
+        key = "tv.station", #name of the new column of 'old columns to be gathered'
+        value = "coverage", #name of the 'gathered values' 
+        BBC.News:MSNBC) #columns to be 'gathered'
+```
+
+`spread()` is the complement of the above. Try it out!
+```{r}
+#reshape from long to wide
+head(spread(plot_df, tv.station, coverage), 3)
+```
+
+## 6. Vectorized functions 
+The magic of R is that functions can work **element-wise** on vectors. Imagine we had a vector which contains a sequence of numbers from 1 to 10 million, let's call this variable `test_var`. 
+```{r}
+#create a vector called test_var which contains a sequence of numbers from 1 to 10 million
+test_var <- seq(1, 1000000, 1)
+head(test_var)
+#check if it is a vector
+is.vector(test_var)
+```
+Now imagine we wanted to square every number in this sequence and put it in a new variable called `test_var2`. A 'brute force' method might be to create a for loop:
+```{r}
+#create a new variable called test_var2
+test_var2 <- test_var
+#start the clock
+time_forloop <- proc.time()
+#loop through each element in test_var and square it
+for (i in test_var) {
+  test_var2[i] <- i^2 
+}
+#stop the clock
+proc.time() - time_forloop
+```
+Now let's try it the R way
+```{r}
+#start the clock
+time_vectorized <- proc.time()
+#apply it to the vector
+test_var2 <- test_var^2
+#stop the clock
+proc.time() - time_vectorized
+```
+This is all great for **vectors**, but can we do this for **lists**? 
+```{r}
+#create a list called test_var which contains a sequence of numbers from 1 to 10 million
+test_var <- as.list(seq(1, 1000000, 1))
+#preview list
+head(test_var, 3)
+#check if it is a list
+is.list(test_var)
+```
+Now let's try squaring each element in the list like how we did earlier.
+```{r}
+#try 'squaring' the list
+#test_var2 <- test_var^2
+```
+Looks like it doesn't quite work for lists, but that's okay! We can use the function called `map()` under the `purrr` package, which 'maps' a function over a list or vector **element-wise**, and returns a list as the output (the closest base R equivalent is `lapply`). First, let's create a function called `temp.convert()` that converts temperature from Celsius to Fahrenheit.
+```{r}
+#create function called temp.convert()
+temp.convert <- function(temp.C) {
+  temp.F <- temp.C*1.8 + 32
+  print(paste0(temp.C, "C is equivalent to ", temp.F, "F"))
+}
+```
+Now let's create a **list** of temperatures in Celsius.
+```{r}
+#create a list of temperatures in celsius
+temp.list <- list(30, 20, 39, 10, -1, -7, -8, -9)
+```
+Now let's apply the `temp.convert()` function we created to the list of temperatures.
+```{r}
+#install.packages("purrr")
+library(purrr)
+#use map function to 'map' temp.convert() over temp.list
+temps.converted <- map(.x = temp.list, .f = temp.convert)
+#what type of object is temps.converted?
+class(temps.converted)
+```
+For fun, let's try the `map()` function on a **vector** of temperatures.
+```{r}
+#create a vector of temperatures in celsius
+temp.vector <- c(30, 20, 39, 10, -1, -7, -8, -9)
+#map temp.convert() over temp.vector
+temps.converted2 <- map_chr(.x = temp.vector, .f = temp.convert)
+#check if temps.converted2 is a list
+is.list(temps.converted2)
+#check if temps.converted2 is a vector
+is.vector(temps.converted2)
+#what type of vector is temps.converted2?
+class(temps.converted2)
+```
+Variants of `map()` are `map_lgl()`, `map_int()`, `map_dbl()` and `map_chr()` which return **vectors** of the corresponding type. To return dataframes, one can use `map_dfr()` and `map_dfc()`. When given a list of vectors, either function binds the vectors into a data frame by rows or columns. Remember that these last 2 variants require the `dplyr` package to work.
+
+## 7. Data visualization with ggplot2 
+The `ggplot2` package is based on the **grammar of graphics**, the idea that you can build every graph from the same few components: a data set, a set of geoms (data points), and a coordinate system.
+
+```{r}
+#install.packages ("ggplot2")
+#install.packages ("scales")
+library(ggplot2) 
+library(scales)
+
+#view dataframe for plotting 
+head(plot_df)
+
+#create density plots  
+ggplot(data = plot_df) +
+  geom_density(aes(x = coverage, fill = tv.station), alpha = 0.3) +
+  xlab("news coverage")  #label the x axis
+
+#create a timeseries of news coverage 
+ggplot(data = plot_df) +
+  geom_line(aes(x = as.Date(Date, "%m/%d/%y"), y = coverage, 
+                group = tv.station, 
+                color = tv.station), alpha = 0.7) +
+  xlab("date") + 
+  scale_x_date(labels = date_format("%m/%d"),
+               breaks = date_breaks("1 week")) 
+
+#we could also have separate plots by tv station by using facet_wrap()
+ggplot(data = plot_df) +
+  geom_line(aes(x = as.Date(Date, "%m/%d/%y"), y = coverage, 
+                group = tv.station, 
+                color = tv.station), alpha = 0.5) +
+  facet_wrap(~tv.station, ncol = 4) + 
+  xlab("date") + 
+  scale_x_date(labels = date_format("%m/%d"),
+               breaks = date_breaks("2 weeks")) 
+
+#create histograms of each hurricane in terms of number of observations
+ggplot(data = plot_df) +
+  geom_bar(aes(x = Hurricane, fill = Hurricane), 
+           color = "black",
+           stat = "count", #calculates the number of cases in each group
+           alpha = 0.3) 
+
+#create scatterplot of news coverage against time by TV Station
+ggplot(data = plot_df) +
+  geom_point(aes(y = coverage, x = as.Date(Date, "%m/%d/%y"), color = tv.station),
+             shape = 16,
+             size = 4,
+             alpha = 0.3) + 
+  xlab("date") + 
+  scale_x_date(labels = date_format("%m/%d"),
+               breaks = date_breaks("1 week")) 
+
+```
+
+You may need to overlay plots sometimes, you can do this via layers, remember that they need to share common x and y axes.
+```{r}
+#overlay scatterplot on timeseries lineplot
+ggplot(data = plot_df) +
+  geom_line(aes(x = as.Date(Date, "%m/%d/%y"), y = coverage, 
+                group = tv.station, 
+                color = tv.station), alpha = 0.7) +
+  geom_point(aes(y = coverage, x = as.Date(Date, "%m/%d/%y"), color = tv.station),
+             shape = 16,
+             size = 4,
+             alpha = 0.3) + 
+  xlab("date") + 
+  scale_x_date(labels = date_format("%m/%d"),
+               breaks = date_breaks("1 week")) 
+
+```
+
+## 8. Fitting Linear Models 
+
+Assuming in a bizarre world, we want to find out if MSNBC media coverage has an effect on CNN media coverage
+```{r}
+#regress CNN on MSNBC 
+model <- lm(CNN ~ MSNBC, data = df)
+summary(model)
+```
+Assuming we'd like to run another model that adds hurricane fixed effects
+```{r}
+library(lfe)
+model2 <- felm(CNN ~ MSNBC | as.factor(Hurricane), data = df)
+summary(model2)
+```
+
+
+
+
+#### More Helpful Links
+* https://github.com/yixinsun1216/covertoperations_manual/wiki/R-Guide 
+* https://tutorials.iq.harvard.edu/R/Rstatistics/Rstatistics.html
+* http://genomicsclass.github.io/book/pages/dplyr_tutorial.html
+* https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html
+* https://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html

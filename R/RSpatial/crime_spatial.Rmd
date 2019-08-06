@@ -1,0 +1,361 @@
+---
+title: "Crime Data Mapping Using R Spatial"
+output:
+  html_document:
+    df_print: paged
+---
+
+Tutorial on reading in data and creating some basic maps in the simple features package. The first step here is to load in some packages. 
+
+```{r setup, warning = FALSE, message = FALSE}
+library(sf)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(mapview)
+library(lubridate)
+
+# set directory from which we read in data
+ddir <- "/Users/vishannigam/Dropbox/EPIC Predoc Resources/epic_orientation/data/Spatial_crime"
+
+# function that creates custom map style for ggplot
+theme_nothing <- function(base_size = 12, title_size = 15){
+  return(
+    theme(panel.grid.major = element_line(colour = "transparent"), 
+          panel.grid.minor = element_line(colour = "transparent"),
+          panel.background = element_blank(), axis.line = element_blank(), 
+          axis.text.x = element_blank(),
+          axis.text.y = element_blank(), 
+          axis.title = element_blank(), 
+          axis.ticks = element_blank(),
+          plot.title = element_text(size = title_size, hjust = 0.5), 
+          plot.caption = element_text(size = 6))) 
+}
+
+```
+
+# Converting CSV to `sf` Object
+Our exapmle will stem from a simple dataset on crimes in the UK. Often times with point objects, the data comes in a table of latitude and longitude, which we coerce into a spatial object. The important thing here is to know which coordinate reference system we are using.
+
+```{r convert csv}
+utm_crs <- 27700
+
+# load data in and get rid of spaces in column names
+streetCrime <- 
+  read_csv(file.path(ddir, "2012-03-cumbria-street.csv")) %>%
+  rename(Report_by = `Reported by`, 
+         Falls_within = `Falls within`, 
+         Crime_type = `Crime type`)
+
+# take a look at the data as a dataframe
+glimpse(streetCrime)
+
+# convert from dataframe to sf object
+streetCrime <-
+  streetCrime %>%
+  st_as_sf(coords = c("Easting", "Northing"), crs = utm_crs)
+
+# take a look at the data as an sf object
+glimpse(streetCrime)
+
+```
+
+# Exploratory Plotting
+
+There are several ways to visualize data - base R, `mapview`, or `ggplot2`. `mapview` is great for quickly creating interactive visualizations of your spatial data, and is therefore a convenient way to investigate the geometries (for example, visualizing using `mapview` is a good way to visualize if you have the right coordinate reference system). 
+
+```{r plotting options}
+plot(streetCrime$geometry)
+
+# mapview has several types of maps the data can be overlaid on
+# check which type of map you'd like here http://leaflet-extras.github.io/leaflet-providers/preview/
+mapview(streetCrime, map.types = "OpenStreetMap.DE") 
+
+streetCrime %>%
+  ggplot() + 
+  geom_sf(aes(colour = Crime_type)) + 
+  ggtitle("Street Crime By Type") + 
+  theme_nothing()
+
+```
+
+# Police Neighbourhood Areas
+UK Crime is organized by neighborhoods. Here, we read in the shapefile of the neighborhoods and aggregate the point data to the neighborhood level. 
+Important to note that the neighborhood polygons are in longitude/latitude while the crime data is in UTM, so we must first convert the data to the same CRS
+
+```{r neighbourhood shapefile}
+
+# read in neighbourhoods shapefile
+nh <- 
+  file.path(ddir, "neighbourhoods.shp") %>%
+  st_read(stringsAsFactors = F) %>%
+  st_transform(utm_crs)
+  
+# plot the polygons with points on top
+nh %>%
+  ggplot() + 
+  geom_sf() +
+  geom_sf(data = streetCrime) + 
+  ggtitle("Neighbourhood Polygons") + 
+  theme_nothing()
+```
+
+This plain map is not visually appealing, and besides seeing that some parts have more concentrated dots than others, it's not very informative either. Let's instead color the neighbourhoods by the number of crimes in each region and create a chloropleth map. 
+
+```{r neighbourhood crime}
+
+# Join crime data to neighbourhood polyogns
+# aggregate total crime in each neighbourhood 
+nh_crime <-
+  nh %>%
+  st_join(streetCrime) %>% 
+  group_by(ID, Name, Population) %>%
+  summarise(total_crimes = n()) %>%
+  mutate(crime_per_capita = total_crimes / Population)
+
+# plot chloropleth map - ARRANGE 2 PLOTS SIDE BY SIDE FOR LEVELS AND THEN PER 
+
+per_capita_map <-
+  nh_crime %>%
+  ggplot() +
+  geom_sf(aes(fill = crime_per_capita)) + 
+  theme_nothing() + 
+  scale_fill_continuous(low = "#fee0d2", high = "#67000d") +
+  ggtitle("Per Capita Crime")
+
+tot_crime_map <-
+  nh_crime %>%
+  ggplot() +
+  geom_sf(aes(fill = total_crimes)) + 
+  theme_nothing() + 
+  scale_fill_continuous(low = "#fee0d2", high = "#67000d") +
+  ggtitle("Crime in Neighbourhoods")
+
+# use gridExtra package to print maps side by side
+library(gridExtra)
+grid.arrange(tot_crime_map, per_capita_map, ncol = 2)
+
+```
+
+You'll notice that most of the county is pretty light colored - this is because the distribution is very skew. Try taking a log-transform and mapping that.
+
+```{r log transformation}
+log_per_capita_map <-
+  nh_crime %>%
+  ggplot() +
+  geom_sf(aes(fill = log(crime_per_capita))) + 
+  theme_nothing() + 
+  scale_fill_continuous(low = "#fee0d2", high = "#67000d") +
+  ggtitle("Log Crime per Capita")
+
+log_tot_crime_map <-
+  nh_crime %>%
+  ggplot() +
+  geom_sf(aes(fill = log(total_crimes))) + 
+  theme_nothing() + 
+  scale_fill_continuous(low = "#fee0d2", high = "#67000d") +
+  ggtitle("Log Crime")
+
+# use gridExtra package to print maps side by side
+grid.arrange(log_tot_crime_map, log_per_capita_map, ncol = 2)
+```
+
+
+# Land Use Raster Data
+Some neighbourhoods are clearly more rural than others. Therefore, it might be useful to visualize the land types the analysis region. Here, we learn how to read in and extract information from a raster file. 
+
+Raster files store information for each pixel. In this case, we have a land use classification at each pixel level. What we want to do is for each neighbourhood polygon, count up the number of pixels in that polygon that fall within each land use classification.
+
+To do this we use 3 files 
+* raster file, for which each pixel is classified using a number, 
+* raster legend file which is a dictionary mapping the numbers to a type of land use classification
+* neighbourhood polygon file which we want to overlay onto the raster file and count up the number of pixels in that polygon that for each classification
+
+```{r land use file}
+library(raster)
+
+# read in legend for land use raster file
+legend <- 
+  file.path(ddir, "legend.csv") %>%
+  read_csv()
+head(legend)
+
+# read in raster file
+landUse <- raster(file.path(ddir, "cumbriaLandUse.tif"))
+plot(landUse)
+
+```
+
+```{r extract all}
+# the extract() function from the raster package extract values of the pixel of a raster object that is covered by a polygon. Let's look at this with 1 polygon
+# note that extract currently only works with `sp` objects, so we first 
+# transform nh to an `sp` object
+nh_sp <- as(nh, "Spatial")
+extract(landUse, nh_sp[1,])
+
+# extract highest classification type for all polygons
+lu_extracted <- extract(landUse, nh_sp)
+
+# function for counting up land use classification in a polygon,
+# and returns the fraction of pixels in each classification
+lc_extract <- function(p, id){
+  lc_temp <- 
+    as_tibble(p) %>%
+    filter(value != 0) %>%
+    left_join(legend, by = c("value" = "GRID_CODE")) %>%
+    group_by(Classification = LABEL2) %>%
+    summarise(n = n()) %>%
+    mutate(ID = id, 
+           perc_covered = n / sum(n)) 
+
+  return(lc_temp)
+}
+
+# use the functional programming package instead of apply family
+# shape the list of classifications into percent of polygon area covered
+library(purrr) # use the functional programming package instead of apply family
+lu_classified <- map2_df(lu_extracted, nh$ID, lc_extract)
+
+# for our broad classification, we take the classification with the most number
+# of pixels
+lu_crime <- 
+  lu_classified %>%
+  group_by(ID) %>%
+  arrange(-perc_covered) %>%
+  filter(row_number() == 1) %>%
+  right_join(nh_crime)
+
+
+# map land use
+lu_crime %>%
+  ggplot() +
+  geom_sf(aes(fill = Classification)) + 
+  theme_nothing() + 
+  theme(legend.position = "bottom") +
+  ggtitle("Land Use of Neighbourhoods") +
+  guides(fill = guide_legend(nrow=2))
+
+lu_crime %>%
+  ggplot() +
+  geom_sf(aes(fill = Classification)) + 
+  theme_nothing() + 
+  ggtitle("Land Use and Crime") + 
+  geom_sf(data = streetCrime, shape = 3) + 
+  theme(legend.position = "none")
+
+
+```
+
+
+# Crimes and Roads
+Here we are interested in whether crimes are close to major roads, or if there are specific crimes that usually happen near roads. We load in road data, and find distance of crimes to roads. Let's plot the density and cumulative distribution of distances for violent , burglary, and shoplifting crimes.
+
+
+```{r crime and roads}
+roads <- 
+  file.path(ddir, "mainroads.shp") %>%
+  st_read(stringsAsFactors = F) %>%
+  st_transform(utm_crs)
+
+table(roads$type)
+
+# keep just major roads
+roads <- 
+  roads %>%
+  filter(type %in% c("motorway", "motorway_link", "trunk", "trunk_link", 
+                     "primary", "primary_link"))
+
+# Get distance to closest main road
+streetCrime$dRoad <- 
+  st_distance(streetCrime, roads) %>%
+  apply(1, min)
+
+
+streetCrime %>%
+  filter(Crime_type %in% c("Violent crime", "Burglary", 
+                           "Shoplifting")) %>%
+  ggplot() +
+  geom_density(aes(dRoad, group = Crime_type, colour = Crime_type)) +
+  theme_minimal()
+
+streetCrime %>%
+  filter(Crime_type %in% c("Violent crime", "Burglary", 
+                           "Shoplifting")) %>%
+  ggplot() +
+  stat_ecdf(aes(dRoad, group = Crime_type, colour = Crime_type)) +
+  theme_minimal()
+
+
+```
+
+
+
+# Crime over Time
+We also have a data file of the crime counts in neighbourhoods for a number of month. The file has one for each month for each neighbourhood, and lists the number of crimes in each category. Here, we first join this with the neighbourhoods polygons and create some time series plots
+
+```{r space-time data}
+allCrime <-
+  file.path(ddir, "allCrime.csv") %>%
+  read_csv
+
+glimpse(allCrime)
+
+# right now month is in character format - coerce this into better format
+# use lubridate package
+allCrime <- mutate(allCrime, Month = ymd(paste0(Month, "-01")))
+glimpse(allCrime)
+
+
+# join with neighbourhoods too create a neigbourhoods-month panel
+# note that a left_join preserves the class of the first argument, in this case
+# it results in an sf dataframe
+nh_all <-
+  nh %>% 
+  left_join(allCrime, by = c(ID = "Neighbourhood"))
+
+# make sure neighbourhood-month is unique
+nh_all %>% 
+  group_by(ID, Month) %>%
+  filter(n() > 1)
+
+# plot just the first 4 months of all crimes
+# FORMAT DATES INTO SEPTEMBER 2011 ETC  
+# FIGURE OUT COLOR GRADIENTs
+nh_all %>%
+  filter(Month <= ymd(20111201)) %>%  
+  mutate(Month = format(Month, "%B")) %>%
+  ggplot(aes(fill = `All crime and ASB`)) +
+  geom_sf() + 
+  facet_wrap(~ factor(Month, 
+                      levels = c("September", "October", "November", "December")), 
+             nrow = 1) + 
+  scale_fill_continuous(low = "#fff5f0", high = "#67000d") +
+  theme_nothing() + 
+  theme(legend.position = "bottom")
+
+```
+
+# Represent Data as GIF
+
+A fun option is to represent your data as a GIF! The main package for this is `animations`, although I often use `gganimate` which is a simple extension on the `ggplot2` package. 
+`
+```{r gganimate}
+library(gganimate)
+
+nh_all %>%
+  mutate(Month = format(as.Date(nh_all$Month), "%Y-%m"))  %>%
+  ggplot(aes(fill = log(`All crime and ASB`))) +
+  geom_sf() +
+  scale_fill_continuous(low = "#fff5f0", high = "#67000d") +
+  theme_nothing() + 
+  theme(legend.position = "bottom") + 
+  labs(title = "{closest_state}") +
+  transition_states(Month, 1, 1) 
+
+```
+
+
+# Exercises
+1. Go to the folder `Spatial_palo_alto`, read in the `palo_alto` and `palo_alto_freeway` shapefiles. Plot both layers onto one map
+2. Make chloropleth map of the average per capita income, `PrCpInc`. Also overlay freeway layer on top
+3. Using the demographic data in `palo_alto`, make some maps to show patterns of freeway layouts and different demographics. Do any patterns emerge here?
