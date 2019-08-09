@@ -1,10 +1,8 @@
-#+TITLE: Bash tutorial
+#+TITLE: Bash and command-line tools
 #+AUTHOR: Ivan Higuera-Mendieta
 #+OPTIONS: H:2 toc:t num:t
 #+LATEX_CLASS: beamer
 #+LATEX_CLASS_OPTIONS: [presentation]
-
-* Bash and command-line tool
 
 ** Why should I care? 
 
@@ -103,9 +101,7 @@ able to move complete directories, but not `cp`.
 cp epic_dir/test.txt test_copy.txt
 #+END_SRC 
 
-
-*** Task: Find how to copy directories
-
+*Task:* /Find how to copy directories/
 
 ** Basics: File management II
 
@@ -127,16 +123,16 @@ rm epic_dir/
 #+RESULTS:
 : rm: epic_dir/: is a directory
 
-Remember to use `--recursive` or just `-r` when deleting or copying directories.
+Remember to use ~--recursive~ or just ~-r~ when deleting or copying directories.
 
 
 ** Basics: Piping and redirection (?)
 
 In bash we have some important concepts:
 
- - `STDIN`: What we write in our command. 
- - `STDOUT`: What get prints.
- - `STDERR`: We made a mistake, is the error.
+ - ~STDIN~: What we write in our command. 
+ - ~STDOUT~: What get prints.
+ - ~STDERR~: We made a mistake, is the error.
 
 In piping and redirection,
 
