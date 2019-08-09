@@ -1,0 +1,149 @@
+#+TITLE: Bash tutorial
+#+AUTHOR: Ivan Higuera-Mendieta
+#+OPTIONS: H:2 toc:t num:t
+#+LATEX_CLASS: beamer
+#+LATEX_CLASS_OPTIONS: [presentation]
+
+* Bash and command-line tool
+
+** Why should I care? 
+
+Most of our coding life, we have worked in IDEs (i.e. RStudio, Stata, etc.) that have help us to
+simplfy most of our software development work. But sometimes IDEs are not configurable enough, we
+have to work on remote servers, or simply we need a more personalized space to work.
+
+Working in black (or white) terminals seems like a daunting place, but here we will learn how to
+feel confortable in the command-line, running basic scripts, and personalize our `dotfiles` to make
+our terminal a nice place to live. 
+
+** The ghost in the shell
+
+Shell? Bash?
+
+Computers run several tasks behind courtains. Nowadays, we use graphic interfaces (GUIs) for running
+tasks, read our email, and navigate the web. But graphic interfaces are nothing less than a
+mediator between us and the Shell, a program that runs other programms. *Bash* (Bourne Against
+Shell) is Unix shell, and it will be ubiquitous from now on (even Windows is using a Unix shell)
+ 
+
+** Basics: where am I?
+
+Commands -programs, actually- are always run after the `$` prompt. This is list of basic questions
+that the command-line can answer:
+ - Who am I? (`whoami`)
+ - Where am I? (`pwd`)
+ - What's the world made of? (`ls`)
+ - What the hell is happening? (`top` or `htop`)
+ - Take me to a nice place! (`cd`)
+
+#+BEGIN_SRC bash
+whoami
+#+END_SRC
+
+#+RESULTS:
+: topcat
+
+#+BEGIN_SRC bash
+pwd
+#+END_SRC
+
+#+RESULTS:
+: /Users/topcat
+
+Programs have options (and a lot of documentation), we can explore program options by using the
+`man` command. Try `man ls`. Some programs do not have any documentation, so check the internet for
+their documentation, or `<command> --help`.  
+
+** Basics: moving around tips
+
+Bash has some shortcuts for doing our life easier. For instance:
+
+ #+BEGIN_SRC bash
+ cd epic/ok-computer
+ pwd
+#+END_SRC
+
+#+RESULTS:
+: /Users/topcat/epic/ok-computer
+
+ #+BEGIN_SRC bash
+cd ../.. 
+pwd
+#+END_SRC
+
+#+RESULTS:
+: /
+
+ - A semicolon can concatenate (not pipe, more on that later) two commands.
+ - `..` means going back one level. Hence, `../..` will send us back two levels
+ - In case we want to go back to the root folder `/Users/<user>`, you can try `cd ~`
+ 
+** Basics: File management I
+
+We can create new files and directories by using the `mkdir` and `touch` commands. Lets create the
+`epic_dir` directory, and then a `text.txt` file. 
+
+#+BEGIN_SRC bash
+mkdir epic_dir
+touch epic_dir/test.txt
+#+END_SRC 
+
+#+RESULTS:
+
+Now check that the directroy and the file were creating by using `ls`. One common file tasks is
+copying or moving files or directories. The `mv` and `cp` commands will help us with that. `mv` is
+able to move complete directories. Both commands allow you to rename the file in the new
+destination, or you can use `.` to use the same name. Check `man cp` for more on this.  
+
+Now check that the directroy and the file were creating by using `ls`. One common file tasks is
+copying or moving files or directories. The `mv` and `cp` commands will help us with that. `mv` is
+able to move complete directories, but not `cp`.
+
+#+BEGIN_SRC bash 
+cp epic_dir/test.txt test_copy.txt
+#+END_SRC 
+
+
+*** Task: Find how to copy directories
+
+
+** Basics: File management II
+
+Let's assume that we do not need our recently created files anymore. The `rm` command will help us to
+delete files or directories. The use of `rm` is simple, but be careful! `rm` has big powers, and
+with a big power comes a big responsability. Deleted files by `rm` *cannot* be restored again.
+
+#+BEGIN_SRC bash
+rm epic_dir/test.txt
+#+END_SRC 
+
+
+Now remove the directory with the same command. You should get an error:
+
+#+BEGIN_SRC bash :results verbatim
+rm epic_dir/
+#+END_SRC 
+
+#+RESULTS:
+: rm: epic_dir/: is a directory
+
+Remember to use `--recursive` or just `-r` when deleting or copying directories.
+
+
+** Basics: Piping and redirection (?)
+
+In bash we have some important concepts:
+
+ - `STDIN`: What we write in our command. 
+ - `STDOUT`: What get prints.
+ - `STDERR`: We made a mistake, is the error.
+
+In piping and redirection,
+
+
+
+ 
+
+ 
+
+
