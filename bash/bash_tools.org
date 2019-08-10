@@ -9,7 +9,7 @@ simplfy most of our software development work. But sometimes IDEs are not config
 have to work on remote servers, or simply we need a more personalized space to work.
 
 Working in black (or white) terminals seems like a daunting place, but here we will learn how to
-feel confortable in the command-line, running basic scripts, and personalize our `dotfiles` to make
+feel confortable in the command-line, running basic scripts, and personalize our ~dotfiles~ to make
 our terminal a nice place to live. 
 
 ** The ghost in the shell
@@ -24,13 +24,13 @@ Shell) is Unix shell, and it will be ubiquitous from now on (even Windows is usi
 
 ** Basics: where am I?
 
-Commands -programs, actually- are always run after the `$` prompt. This is list of basic questions
+Commands -programs, actually- are always run after the ~$~ prompt. This is list of basic questions
 that the command-line can answer:
- - Who am I? (`whoami`)
- - Where am I? (`pwd`)
- - What's the world made of? (`ls`)
- - What the hell is happening? (`top` or `htop`)
- - Take me to a nice place! (`cd`)
+ - Who am I? (~whoami~)
+ - Where am I? (~pwd~)
+ - What's the world made of? (~ls~)
+ - What the hell is happening? (~top~ or ~htop~)
+ - Take me to a nice place! (~cd~)
 
 #+BEGIN_SRC bash :exports both :results value
 whoami
@@ -47,8 +47,8 @@ pwd
 : /Users/topcat/epic/orientation2019/bash
 
 Programs have options (and a lot of documentation), we can explore program options by using the
-`man` command. Try `man ls`. Some programs do not have any documentation, so check the internet for
-their documentation, or `<command> --help`.  
+~man~ command. Try ~man ls~. Some programs do not have any documentation, so check the internet for
+their documentation, or ~<command> --help~.  
 
 ** Basics: moving around tips
 
@@ -178,7 +178,7 @@ we will get a *really* long list. If we remember what we learn about just a few 
 long list is the ~STDOUT~, we can pipe (~|~) this list to another command to filter the files we
 want.
 
-#+BEGIN_SRC bash :results output :exports both
+#+BEGIN_SRC bash :results output
 tar -tvf ~/epic_dir/1991.tar.gz | head
 #+END_SRC
 
@@ -204,7 +204,7 @@ mkdir ~/epic_dir/isd_data_1991
 tar -C ~/epic_dir/isd_data_1991 -zxvf 1991.tar.gz
 #+END_SRC
 
-#+BEGIN_SRC bash :results output :exports both
+#+BEGIN_SRC bash :results output 
 ls ~/epic_dir/isd_data_1991 | grep '^62' 
 #+END_SRC
 
@@ -233,7 +233,7 @@ ls ~/epic_dir/isd_data_1991 | grep '^62'
 We can use another pipe to get the number of station starting with 62 (notice that the ~-l~ flag
 tells the ~wc~ command to count lines):
 
-#+BEGIN_SRC bash :results value :exports both
+#+BEGIN_SRC bash :results value
 ls ~/epic_dir/isd_data_1991 | grep '^62' | wc -l
 #+END_SRC
 
@@ -250,7 +250,7 @@ ls ~/epic_dir/isd_data_1991 | grep '^62' > ~/epic_dir/isd_stations_starting_62.t
 
 If we check this file, we can see that the ~STDOUT~ of our last command is in our text file:
 
-#+BEGIN_SRC bash :results output :exports both
+#+BEGIN_SRC bash :results output
 head ~/epic_dir/isd_stations_starting_62.txt
 #+END_SRC 
 
@@ -281,7 +281,7 @@ tail ~/epic_dir/isd_stations_starting_62.txt
 #+begin_example
 70387099999.csv
 70388699999.csv
-70395025325.csv
+7039502532e.csv
 70398025308.csv
 70414099999.csv
 70454025704.csv
@@ -291,12 +291,75 @@ tail ~/epic_dir/isd_stations_starting_62.txt
 70489899999.csv
 #+end_example
 
-Another valid approach would be to use the `cat` command to concatenate text files, and use ~>~ to
+Another valid approach would be to use the ~cat~ command to concatenate text files, and use ~>~ to
 assign the output to a new file, but this approach is cleaner (we do not create additional files).
 We have other types of redirection commands, but we will talk about them during the scripting part
 of this tutorial. 
 
 ** Text wranggling and editing
+
+Text editing is a big part of living in the command-line. Before checking how to write novels in our
+terminal, let's first explore how to do simpler stuff. We have lots of CSVs in out ~isd_data_1991~.
+Instead of using Excel or other tabular-format editor (I'm talking to you Stata), we can explore
+them in the command-line.
+
+We have already cover how ~cat~, ~head~, and ~tail~ are useful function to print lines, in this
+case: 
+
+#+BEGIN_SRC bash :results table :exports both
+head -n 5  ~/epic_dir/isd_data_1991/01088099999.csv
+#+END_SRC
+
+#+RESULTS:
+|    STATION | DATE                | SOURCE |   LATITUDE | LONGITUDE | ELEVATION | NAME      | REPORT_TYPE | CALL_SIGN | QUALITY_CONTROL | WND            | CIG         | VIS          | TMP     | DEW     | SLP     | AG1   | GA1                | GA2                | GA3 | MA1             | MW1  | OC1 | REM            | EQD              |
+| 1088099999 | 1991-01-01T05:50:00 |      4 | 70.0666667 |     29.85 |      39.0 | VADSO, NO | FM-15       | ENVD      | V020            | 030,1,N,0036,1 | 00600,1,C,N | 011200,1,N,1 | -0080,1 | -0090,1 | 99999,9 | 2,000 | 01,1,+00300,9,07,9 | 05,1,+00600,9,08,9 |     | 10071,1,99999,9 | 26,1 |     |                |                  |
+| 1088099999 | 1991-01-01T10:50:00 |      4 | 70.0666667 |     29.85 |      39.0 | VADSO, NO | FM-15       | ENVD      | V020            | 330,1,N,0026,1 | 00360,1,C,N | 011200,1,N,1 | -0080,1 | -0080,1 | 99999,9 | 2,999 | 03,1,+00240,9,07,9 | 05,1,+00360,9,07,9 |     | 10081,1,99999,9 |      |     |                | Q01+000000PRSWM2 |
+| 1088099999 | 1991-01-01T13:50:00 |      4 | 70.0666667 |     29.85 |      39.0 | VADSO, NO | FM-15       | ENVD      | V020            | 300,1,N,0051,1 | 22000,1,C,N | 011200,1,N,1 | -0100,1 | -0100,1 | 99999,9 | 2,999 | 03,1,+00180,9,07,9 |                    |     | 10091,1,99999,9 |      |     | MET008SEAFOG S | Q01+000000PRSWM2 |
+| 1088099999 | 1991-01-01T14:50:00 |      4 | 70.0666667 |     29.85 |      39.0 | VADSO, NO | FM-15       | ENVD      | V020            | 300,1,N,0041,1 | 22000,1,C,N | 011200,1,N,1 | -0100,1 | -0100,1 | 99999,9 | 2,000 | 04,1,+00180,9,07,9 |                    |     | 10091,1,99999,9 |      |     | MET008SEAFOG S | Q01+000000PRSWM2 |
+
+But, we can pre-process data from the command-line. Here `awk`, `cut`, and other tools are relevant:
+
+If we want to select only some columns, we can use the ~cut~ command. For example, let's get all
+the report types and its timestamps:  
+
+*Warning*: I will follow a die-hard unix way of doing this. As we will see later, some of these
+tasks are easily tackled by using a real scripting laguage (like snake:). 
+
+#+BEGIN_SRC bash :results output :exports both
+sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 2,8 | head 
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+"DATE"|"REPORT_TYPE"
+"1991-01-01T00:00:00"|"FM-12"
+"1991-01-01T03:00:00"|"FM-12"
+"1991-01-01T06:00:00"|"FM-12"
+"1991-01-01T09:00:00"|"FM-12"
+"1991-01-01T12:00:00"|"FM-12"
+"1991-01-01T15:00:00"|"FM-12"
+"1991-01-01T18:00:00"|"FM-12"
+"1991-01-01T21:00:00"|"FM-12"
+"1991-01-02T00:00:00"|"FM-12"
+#+end_example
+
+
+Here we are combining several concepts: 
+ - We are directing the CSV file to the ~sed~ command that will search all comma separators and
+   replace them by pipes: ~"|"~.
+ - Later, we send that output to the ~cut~ command to filter out the columns of interest (2 and 8)
+ - Print the head of the final output
+
+We can also check unique values by using ~uniq~.  
+
+#+BEGIN_SRC bash :results output :exports both
+sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 8 | uniq
+#+END_SRC
+
+#+RESULTS:
+: "REPORT_TYPE"
+: "FM-12"
+
 
 
 
