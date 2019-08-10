@@ -14,7 +14,7 @@ our terminal a nice place to live.
 
 ** The ghost in the shell
 
-Shell? Bash?
+/Shell? Bash?/
 
 Computers run several tasks behind courtains. Nowadays, we use graphic interfaces (GUIs) for running
 tasks, read our email, and navigate the web. But graphic interfaces are nothing less than a
@@ -30,7 +30,7 @@ that the command-line can answer:
  - Where am I? (~pwd~)
  - What's the world made of? (~ls~)
  - What the hell is happening? (~top~ or ~htop~)
- - Take me to a nice place! (~cd~)
+ - Take me to a nice place! (~cd~) 
 
 #+BEGIN_SRC bash :exports both :results value
 whoami

@@ -74,7 +74,7 @@ This is a comprehensive list of what we need to install:
 Although you can install software using click-and-point, you can also install
 software in a more programatic way. 
 
-- MacOS users - [[file:./prerequisites/mac_homebrew.md[Instructions]]
+- MacOS users - [[file:./prerequisites/mac_homebrew.md][Instructions]]
 - Linux users - You probably know how to do this already
 - Windows - Change OS. 
 
