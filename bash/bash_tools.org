@@ -70,32 +70,32 @@ pwd
 #+END_SRC
 
 #+RESULTS:
-: /
+: /Users/topcat/epic
 
  - A semicolon can concatenate (not pipe, more on that later) two commands.
- - `..` means going back one level. Hence, `../..` will send us back two levels
- - In case we want to go back to the root folder `/Users/<user>`, you can try `cd ~`
+ - ~..~ means going back one level. Hence, ~../..~ will send us back two levels
+ - In case we want to go back to the root folder /Users/<user>, you can try cd ~
  
 ** Basics: File management I
 
-We can create new files and directories by using the `mkdir` and `touch` commands. Lets create the
-`epic_dir` directory, and then a `text.txt` file. 
+We can create new files and directories by using the mkdir and touch commands. Lets create the
+epic_dir directory, and then a text.txt file. 
 
 #+BEGIN_SRC bash
-mkdir epic_dir
+mkdir epic_test_dir
 touch epic_dir/test.txt
 #+END_SRC 
 
 #+RESULTS:
 
-Now check that the directroy and the file were creating by using `ls`. One common file tasks is
-copying or moving files or directories. The `mv` and `cp` commands will help us with that. `mv` is
+Now check that the directroy and the file were creating by using ls. One common file tasks is
+copying or moving files or directories. The mv and cp commands will help us with that. mv is
 able to move complete directories. Both commands allow you to rename the file in the new
-destination, or you can use `.` to use the same name. Check `man cp` for more on this.  
+destination, or you can use . to use the same name. Check man cp for more on this.  
 
-Now check that the directroy and the file were creating by using `ls`. One common file tasks is
-copying or moving files or directories. The `mv` and `cp` commands will help us with that. `mv` is
-able to move complete directories, but not `cp`.
+Now check that the directroy and the file were creating by using ls. One common file tasks is
+copying or moving files or directories. The mv and cp commands will help us with that. mv is
+able to move complete directories, but not cp.
 
 #+BEGIN_SRC bash 
 cp epic_dir/test.txt test_copy.txt
@@ -105,9 +105,9 @@ cp epic_dir/test.txt test_copy.txt
 
 ** Basics: File management II
 
-Let's assume that we do not need our recently created files anymore. The `rm` command will help us to
-delete files or directories. The use of `rm` is simple, but be careful! `rm` has big powers, and
-with a big power comes a big responsability. Deleted files by `rm` *cannot* be restored again.
+Let's assume that we do not need our recently created files anymore. The rm command will help us to
+delete files or directories. The use of rm is simple, but be careful! rm has big powers, and
+with a big power comes a big responsability. Deleted files by rm *cannot* be restored again.
 
 #+BEGIN_SRC bash
 rm epic_dir/test.txt
@@ -125,8 +125,7 @@ rm epic_dir/
 
 Remember to use ~--recursive~ or just ~-r~ when deleting or copying directories.
 
-
-** Basics: Piping and redirection (?)
+** Basics: Piping and output redirection
 
 In bash we have some important concepts:
 
@@ -134,12 +133,179 @@ In bash we have some important concepts:
  - ~STDOUT~: What get prints.
  - ~STDERR~: We made a mistake, is the error.
 
-In piping and redirection,
+
+#+CAPTION: Standard out in a nutshell
+#+NAME: stdout
+[[../imgs/std_streams.png]] 
+
+
+Let's see how to use it: 
+
+Download all the Integrated Surface Climate data from NOAA for the year 1990:
+
+#+BEGIN_SRC bash
+cd ~ 
+mkdir epic_dir
+cd epic_dir
+wget https://www.ncei.noaa.gov/data/global-hourly/archive/csv/1991.tar.gz
+#+END_SRC 
+
+#+RESULTS:
+
+We downloaded a new compressed file with the same name of the URL file (check ~man wget~ to check
+how to use a different name). To check the contents of our file, we can use the ~tar~ command to
+list and extract the file contents. 
+
+If we run: 
+
+#+BEGIN_SRC bash :results output
+tar -tvf ~/epic_dir/1991.tar.gz
+#+END_SRC 
+
+#+RESULTS:
+#+begin_example
+-rw-r--r--  0 0      0      925981 Jun  2  2017 01001099999.csv
+-rw-r--r--  0 0      0      747988 Jun  2  2017 01001499999.csv
+-rw-r--r--  0 0      0     1115107 Jun  2  2017 01001599999.csv
+-rw-r--r--  0 0      0      708498 Jun  2  2017 01001699999.csv
+-rw-r--r--  0 0      0      237514 Jun  2  2017 01001799999.csv
+-rw-r--r--  0 0      0        2087 Jun  2  2017 99644099999.csv
+-rw-r--r--  0 0      0        1066 Jun  2  2017 99647099999.csv
+-rw-r--r--  0 0      0         793 Jun  2  2017 99658099999.csv
+-rw-r--r--  0 0      0        1591 Jun  2  2017 99663099999.csv
+-rw-r--r--  0 0      0        1699 Jun  2  2017 99633099999.csv
+-rw-r--r--  0 0      0     3159048 Jun  2  2017 99999941406.csv
+-rw-r--r--  0 0      0    54477294 Jun  2  2017 99999999999.csv
+(...)
+#+end_example
+
+we will get a *really* long list. If we remember what we learn about just a few minutes ago, this
+long list is the ~STDOUT~, we can pipe (~|~) this list to another command to filter the files we
+want.
+
+#+BEGIN_SRC bash :results output
+tar -tvf ~/epic_dir/1991.tar.gz | head
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+-rw-r--r--  0 0      0      925981 Jun  2  2017 01001099999.csv
+-rw-r--r--  0 0      0      747988 Jun  2  2017 01001499999.csv
+-rw-r--r--  0 0      0     1115107 Jun  2  2017 01001599999.csv
+-rw-r--r--  0 0      0      708498 Jun  2  2017 01001699999.csv
+-rw-r--r--  0 0      0      237514 Jun  2  2017 01001799999.csv
+-rw-r--r--  0 0      0      430791 Jun  2  2017 01003099999.csv
+-rw-r--r--  0 0      0      368437 Jun  2  2017 01004099999.csv
+-rw-r--r--  0 0      0     2528605 Jun  2  2017 01008099999.csv
+-rw-r--r--  0 0      0      304582 Jun  2  2017 01015099999.csv
+-rw-r--r--  0 0      0      180001 Jun  2  2017 01017099999.csv
+#+end_example
+
+We can also find specific files using ~grep~. In this case, let's extract the file contents and 
+filter only a subset of [[ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.txt][stations]] starting by 62:
+
+#+BEGIN_SRC bash :results output
+mkdir ~/epic_dir/isd_data_1991
+tar -C ~/epic_dir/isd_data_1991 -zxvf 1991.tar.gz
+#+END_SRC
+
+#+BEGIN_SRC bash :results output 
+ls ~/epic_dir/isd_data_1991 | grep '^62' 
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+62002099999.csv
+62007099999.csv
+62008099999.csv
+62010099999.csv
+62012099999.csv
+62016099999.csv
+62019099999.csv
+62053099999.csv
+62055099999.csv
+62056099999.csv
+62059099999.csv
+62062099999.csv
+62103099999.csv
+62120099999.csv
+62124099999.csv
+62131099999.csv
+62941099999.csv
+(...)
+#+end_example
+
+We can use another pipe to get the number of station starting with 62 (notice that the ~-l~ flag
+tells the ~wc~ command to count lines):
+
+#+BEGIN_SRC bash :results value
+ls ~/epic_dir/isd_data_1991 | grep '^62' | wc -l
+#+END_SRC
+
+#+RESULTS:
+: 68
+
+Additionally, we can send all our types of ~STD~ ouputs to new files by using the redirection
+functions: ~>~ and ~>>~ (we will see another ones later). Once we print the list of stations of
+interest, is hard to copy and paste all the contents. We can save the results in a text file: 
+
+#+BEGIN_SRC bash 
+ls ~/epic_dir/isd_data_1991 | grep '^62' > ~/epic_dir/isd_stations_starting_62.txt
+#+END_SRC  
+
+If we check this file, we can see that the ~STDOUT~ of our last command is in our text file:
+
+#+BEGIN_SRC bash :results output
+head ~/epic_dir/isd_stations_starting_62.txt
+#+END_SRC 
+
+#+RESULTS:
+#+begin_example
+62002099999.csv
+62007099999.csv
+62008099999.csv
+62010099999.csv
+62012099999.csv
+62016099999.csv
+62019099999.csv
+62053099999.csv
+62055099999.csv
+62056099999.csv
+#+end_example
+
+
+Let's assume that we also want all the stations that start with 70 in the same file. For this task
+we can use the same formula we use above, but using ~>>~ instead: 
+
+#+BEGIN_SRC bash :results output
+ls ~/epic_dir/isd_data_1991 | grep '^70' >> ~/epic_dir/isd_stations_starting_62.txt
+tail ~/epic_dir/isd_stations_starting_62.txt 
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+70387099999.csv
+70388699999.csv
+70395025325.csv
+70398025308.csv
+70414099999.csv
+70454025704.csv
+70454599999.csv
+70482025626.csv
+70489099999.csv
+70489899999.csv
+#+end_example
+
+Another valid approach would be to use the `cat` command to concatenate text files, and use ~>~ to
+assign the output to a new file, but this approach is cleaner (we do not create additional files).
+We have other types of redirection commands, but we will talk about them during the scripting part
+of this tutorial. 
+
+** Text wranggling and editing
 
 
 
- 
 
- 
+
 
 
