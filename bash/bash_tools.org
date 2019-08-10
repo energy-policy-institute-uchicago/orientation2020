@@ -1,8 +1,6 @@
 #+TITLE: Bash and command-line tools
 #+AUTHOR: Ivan Higuera-Mendieta
 #+OPTIONS: H:2 toc:t num:t
-#+LATEX_CLASS: beamer
-#+LATEX_CLASS_OPTIONS: [presentation]
 
 ** Why should I care? 
 
@@ -34,19 +32,19 @@ that the command-line can answer:
  - What the hell is happening? (`top` or `htop`)
  - Take me to a nice place! (`cd`)
 
-#+BEGIN_SRC bash
+#+BEGIN_SRC bash :exports both :results value
 whoami
 #+END_SRC
 
 #+RESULTS:
 : topcat
 
-#+BEGIN_SRC bash
+#+BEGIN_SRC bash :exports both :results value
 pwd
 #+END_SRC
 
 #+RESULTS:
-: /Users/topcat
+: /Users/topcat/epic/orientation2019/bash
 
 Programs have options (and a lot of documentation), we can explore program options by using the
 `man` command. Try `man ls`. Some programs do not have any documentation, so check the internet for
@@ -56,7 +54,7 @@ their documentation, or `<command> --help`.
 
 Bash has some shortcuts for doing our life easier. For instance:
 
- #+BEGIN_SRC bash
+ #+BEGIN_SRC bash :exports both :results value
  cd epic/ok-computer
  pwd
 #+END_SRC
@@ -64,7 +62,7 @@ Bash has some shortcuts for doing our life easier. For instance:
 #+RESULTS:
 : /Users/topcat/epic/ok-computer
 
- #+BEGIN_SRC bash
+ #+BEGIN_SRC bash :exports both :results value
 cd ../.. 
 pwd
 #+END_SRC
@@ -85,8 +83,6 @@ epic_dir directory, and then a text.txt file.
 mkdir epic_test_dir
 touch epic_dir/test.txt
 #+END_SRC 
-
-#+RESULTS:
 
 Now check that the directroy and the file were creating by using ls. One common file tasks is
 copying or moving files or directories. The mv and cp commands will help us with that. mv is
@@ -116,7 +112,7 @@ rm epic_dir/test.txt
 
 Now remove the directory with the same command. You should get an error:
 
-#+BEGIN_SRC bash :results verbatim
+#+BEGIN_SRC bash :results value :exports both
 rm epic_dir/
 #+END_SRC 
 
@@ -143,14 +139,13 @@ Let's see how to use it:
 
 Download all the Integrated Surface Climate data from NOAA for the year 1990:
 
-#+BEGIN_SRC bash
+#+BEGIN_SRC bash :exports both
 cd ~ 
 mkdir epic_dir
 cd epic_dir
 wget https://www.ncei.noaa.gov/data/global-hourly/archive/csv/1991.tar.gz
 #+END_SRC 
 
-#+RESULTS:
 
 We downloaded a new compressed file with the same name of the URL file (check ~man wget~ to check
 how to use a different name). To check the contents of our file, we can use the ~tar~ command to
@@ -158,7 +153,7 @@ list and extract the file contents.
 
 If we run: 
 
-#+BEGIN_SRC bash :results output
+#+BEGIN_SRC bash :results output :exports both
 tar -tvf ~/epic_dir/1991.tar.gz
 #+END_SRC 
 
@@ -183,7 +178,7 @@ we will get a *really* long list. If we remember what we learn about just a few 
 long list is the ~STDOUT~, we can pipe (~|~) this list to another command to filter the files we
 want.
 
-#+BEGIN_SRC bash :results output
+#+BEGIN_SRC bash :results output :exports both
 tar -tvf ~/epic_dir/1991.tar.gz | head
 #+END_SRC
 
@@ -209,7 +204,7 @@ mkdir ~/epic_dir/isd_data_1991
 tar -C ~/epic_dir/isd_data_1991 -zxvf 1991.tar.gz
 #+END_SRC
 
-#+BEGIN_SRC bash :results output 
+#+BEGIN_SRC bash :results output :exports both
 ls ~/epic_dir/isd_data_1991 | grep '^62' 
 #+END_SRC
 
@@ -238,7 +233,7 @@ ls ~/epic_dir/isd_data_1991 | grep '^62'
 We can use another pipe to get the number of station starting with 62 (notice that the ~-l~ flag
 tells the ~wc~ command to count lines):
 
-#+BEGIN_SRC bash :results value
+#+BEGIN_SRC bash :results value :exports both
 ls ~/epic_dir/isd_data_1991 | grep '^62' | wc -l
 #+END_SRC
 
@@ -255,7 +250,7 @@ ls ~/epic_dir/isd_data_1991 | grep '^62' > ~/epic_dir/isd_stations_starting_62.t
 
 If we check this file, we can see that the ~STDOUT~ of our last command is in our text file:
 
-#+BEGIN_SRC bash :results output
+#+BEGIN_SRC bash :results output :exports both
 head ~/epic_dir/isd_stations_starting_62.txt
 #+END_SRC 
 
@@ -277,7 +272,7 @@ head ~/epic_dir/isd_stations_starting_62.txt
 Let's assume that we also want all the stations that start with 70 in the same file. For this task
 we can use the same formula we use above, but using ~>>~ instead: 
 
-#+BEGIN_SRC bash :results output
+#+BEGIN_SRC bash :results output :exports both
 ls ~/epic_dir/isd_data_1991 | grep '^70' >> ~/epic_dir/isd_stations_starting_62.txt
 tail ~/epic_dir/isd_stations_starting_62.txt 
 #+END_SRC
