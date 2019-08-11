@@ -1,6 +1,6 @@
 #+TITLE: Bash and command-line tools
 #+AUTHOR: Ivan Higuera-Mendieta
-#+OPTIONS: H:2 toc:t num:t
+#+OPTIONS: H:1 num:t
 
 ** Why should I care? 
 
@@ -446,7 +446,7 @@ You can also combine logical statements with ~&&~ and ~||~.
 It's time to use all that we have learned! But first, let's talk about the structure of a bash
 script.
 
-1. Header: 
+*** Header: 
 
 Bash files (as all coding files, should include a shebang and a docstring (a /fancy/ term for
 documentation; you can comment bash files by using the pound: ~# This is a commment~). The shebang
@@ -468,7 +468,7 @@ tell other users (or your future self) what is the script doing. There is no com
 follow, but in general a good documentation should include: name of the script (a general name), a
 good description with step-by-step processes, and the outcome. 
 
-2. Arguments
+*** Arguments
 
 Bash files, as any other scripts in other languages can take arguments. The arguments are defined as
 a variable (remember the ~$~) and a number that also determines the order of the arguments. For
@@ -482,10 +482,12 @@ NAME=$1
 echo $NAME it's awesome!
 #+END_SRC
 
-2.1. File editing: we will use ~nano~ for now
-2.2. Permissions: to run a script file in Bash, you need to give excecution permissions, we can add
-those by using the `chmod` argument and appending executing powers: ~+x~ (hint: use ~ls -la~  to
-check file permissions in a directory). 
+**** File editing: 
+we will use ~nano~ for now
+**** Permissions: 
+to run a script file in Bash, you need to give excecution permissions, we can add those by using the
+`chmod` argument and appending executing powers: ~+x~ (hint: use ~ls -la~ to check file permissions
+in a directory).  
 
 Once the file is created we can run it: ~./im_awesome <your name>~, or another system variable:
 ~./im_awesome $(whoami)~. 
