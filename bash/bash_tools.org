@@ -134,7 +134,7 @@ In bash we have some important concepts:
 
 Let's see how to use it: 
 
-Download all the [[https://www.ncdc.noaa.gov/isd][Integrated Surface Climate] data from NOAA for the year 1990:
+Download all the [[https://www.ncdc.noaa.gov/isd][Integrated Surface Climate]] data from NOAA for the year 1990:
 
 #+BEGIN_SRC bash :exports both
 mkdir ~/epic_dir
@@ -318,7 +318,7 @@ If we want to select only some columns, we can use the ~cut~ command. For exampl
 the report types and its timestamps:  
 
 *Warning*: I will follow a die-hard unix way of doing this. As we will see later, some of these
-tasks are easily tackled by using a real scripting laguage (like snake:). 
+tasks are easily tackled by using a real scripting laguage (like :s). 
 
 #+BEGIN_SRC bash :results output :exports both
 sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 2,8 | head 
@@ -481,12 +481,10 @@ NAME=$1
 echo $NAME it's awesome!
 #+END_SRC
 
-**** File editing: 
-we will use ~nano~ for now
-**** Permissions: 
-to run a script file in Bash, you need to give excecution permissions, we can add those by using the
-`chmod` argument and appending executing powers: ~+x~ (hint: use ~ls -la~ to check file permissions
-in a directory).  
+ - File editing:  we will use ~nano~ for now
+ - Permissions: to run a script file in Bash, you need to give excecution permissions, we can add
+   those by using the  `chmod` argument and appending executing powers: ~+x~ (hint: use ~ls -la~ to
+   check file permissions in a directory).  
 
 Once the file is created we can run it: ~./im_awesome <your name>~, or another system variable:
 ~./im_awesome $(whoami)~. 
@@ -498,7 +496,16 @@ Once the file is created we can run it: ~./im_awesome <your name>~, or another s
 #+RESULTS:
 : topcat it's awesome!
 
+And congratulations! +1: you have just run your first bash files (at least in this course). 
 
+
+** Text editing 
+
+You just edited a file using ~nano~. But Unix has better and more powerful text editors. This
+session is too short for covering ~emacs~, but we can easily talk about ~vim~, a poweful text editor
+that can replace any IDE feature, and that will help you to write better code. 
+
+Let's open Vim by running ~vi~ or ~vim~ in your terminal. Once you open it, try to exit it ... :astonished: 
 
 
 
