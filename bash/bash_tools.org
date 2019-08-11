@@ -14,12 +14,11 @@ our terminal a nice place to live.
 
 ** The ghost in the shell
 
-/Shell? Bash?/
-
-Computers run several tasks behind courtains. Nowadays, we use graphic interfaces (GUIs) for running
-tasks, read our email, and navigate the web. But graphic interfaces are nothing less than a
-mediator between us and the Shell, a program that runs other programms. *Bash* (Bourne Against
-Shell) is Unix shell, and it will be ubiquitous from now on (even Windows is using a Unix shell)
+/Shell? Bash?/ Computers run several tasks behind courtains. Nowadays, we use graphic interfaces
+(GUIs) for running tasks, read our email, and navigate the web. But graphic interfaces are nothing
+less than a mediator between us and the Shell, a program that runs other programms. *Bash* (Bourne
+Against Shell) is Unix shell, and it will be ubiquitous from now on (even Windows is using a Unix
+shell).
  
 
 ** Basics: where am I?
@@ -80,8 +79,8 @@ We can create new files and directories by using the mkdir and touch commands. L
 epic_dir directory, and then a text.txt file. 
 
 #+BEGIN_SRC bash
-mkdir epic_test_dir
-touch epic_dir/test.txt
+mkdir ~/epic_dir
+touch ~/epic_dir/test.txt
 #+END_SRC 
 
 Now check that the directroy and the file were creating by using ls. One common file tasks is
@@ -108,7 +107,6 @@ with a big power comes a big responsability. Deleted files by rm *cannot* be res
 #+BEGIN_SRC bash
 rm epic_dir/test.txt
 #+END_SRC 
-
 
 Now remove the directory with the same command. You should get an error:
 
@@ -137,15 +135,13 @@ In bash we have some important concepts:
 
 Let's see how to use it: 
 
-Download all the Integrated Surface Climate data from NOAA for the year 1990:
+Download all the [[https://www.ncdc.noaa.gov/isd][Integrated Surface Climate] data from NOAA for the year 1990:
 
 #+BEGIN_SRC bash :exports both
-cd ~ 
-mkdir epic_dir
+mkdir ~/epic_dir
 cd epic_dir
 wget https://www.ncei.noaa.gov/data/global-hourly/archive/csv/1991.tar.gz
 #+END_SRC 
-
 
 We downloaded a new compressed file with the same name of the URL file (check ~man wget~ to check
 how to use a different name). To check the contents of our file, we can use the ~tar~ command to
@@ -317,7 +313,7 @@ head -n 5  ~/epic_dir/isd_data_1991/01088099999.csv
 | 1088099999 | 1991-01-01T13:50:00 |      4 | 70.0666667 |     29.85 |      39.0 | VADSO, NO | FM-15       | ENVD      | V020            | 300,1,N,0051,1 | 22000,1,C,N | 011200,1,N,1 | -0100,1 | -0100,1 | 99999,9 | 2,999 | 03,1,+00180,9,07,9 |                    |     | 10091,1,99999,9 |      |     | MET008SEAFOG S | Q01+000000PRSWM2 |
 | 1088099999 | 1991-01-01T14:50:00 |      4 | 70.0666667 |     29.85 |      39.0 | VADSO, NO | FM-15       | ENVD      | V020            | 300,1,N,0041,1 | 22000,1,C,N | 011200,1,N,1 | -0100,1 | -0100,1 | 99999,9 | 2,000 | 04,1,+00180,9,07,9 |                    |     | 10091,1,99999,9 |      |     | MET008SEAFOG S | Q01+000000PRSWM2 |
 
-But, we can pre-process data from the command-line. Here `awk`, `cut`, and other tools are relevant:
+But, we can pre-process data from the command-line. Here ~awk~, ~cut~, and other tools are relevant:
 
 If we want to select only some columns, we can use the ~cut~ command. For example, let's get all
 the report types and its timestamps:  
@@ -346,11 +342,12 @@ sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 2,8
 
 Here we are combining several concepts: 
  - We are directing the CSV file to the ~sed~ command that will search all comma separators and
-   replace them by pipes: ~"|"~.
+   replace them by pipes: ~|~.
  - Later, we send that output to the ~cut~ command to filter out the columns of interest (2 and 8)
  - Print the head of the final output
 
-We can also check unique values by using ~uniq~.  
+We can also check unique values by using ~uniq~. In this case, we can answer the question for unique
+report types in this station in 1991.   
 
 #+BEGIN_SRC bash :results output :exports both
 sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 8 | uniq
@@ -360,8 +357,145 @@ sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 8 |
 : "REPORT_TYPE"
 : "FM-12"
 
+More advanced tasks in the command-line are available using ~awk~ or Python's ~csvkit~. The later is
+extremely useful as a simple program to interact with CSV files. ~csvkit~ can transform, aggregate,
+and query big datafiles without hassle, you can check the [[https://csvkit.readthedocs.io/en/latest/index.html][documentation ]]to learn more about it.
 
+** Bash scripting: loops and conditionals 
 
+Bash is not a formal programming language, but it has several control flow features, and the ability
+of storing variables, just like any other language. Here we will explore two main control flows
+relevant for creating bash scripts: loops and conditionals.
+
+The definition of Bash variables is straight forward: ~var_name=var_content~. Variables are parsed
+as text, unless we specified otherwise. Variables will be stored in the session environment, and can
+be called again using the `$` sign before them: ~echo $varname~.
+
+Having defined the variable definition, we can talk about how to use loops: 
+
+#+BEGIN_SRC bash :results output :exports both
+names='Ian Alice Lixi Sushant'
+for name in $names
+do
+echo $name is learning how to use batch!
+done 
+#+END_SRC
+
+#+RESULTS:
+: Ian is learning how to use batch!
+: Alice is learning how to use batch!
+: Lixi is learning how to use batch!
+: Sushant is learning how to use batch!
+
+We can use ranges instead of variables to look (like ~range~ in Python). Ranges are defined using
+curly braces: ~{1..5}~ is a range from 1 to 5. Additionally, you can use a step: ~{1..10..2}~ will
+yield all multiples of 2 between 1 and 10. 
+
+Now let's jump in to if-statements. Bash has several logic operators:
+ 
+ - Variable comparison: ~=~ (equal), ~!=~ (different), ~-eq~ (numerically equal), ~-gt~ (>), ~-lt~ (<).
+ - Files: ~-d~ (directory exists), ~e~ (file exists). 
+
+Using our example above, we can print only a name we want:
+
+#+BEGIN_SRC bash :results output :exports both
+names='Ian Alice Lixi Sushant'
+for name in $names
+do
+if [ $name = 'Alice' ]
+then
+echo $name is learning how to use batch!
+fi
+done 
+#+END_SRC
+
+#+RESULTS:
+: Alice is learning how to use batch!
+
+Although this is a simple case, we can add also a ~else~ or ~elif~ statement: 
+
+#+BEGIN_SRC bash :results output :exports both
+names='Ian Alice Lixi Sushant'
+for name in $names
+do
+if [ $name = 'Alice' ]
+then
+echo $name is learning how to use batch!
+else
+echo $name is missing the fun
+fi
+done 
+#+END_SRC
+
+#+RESULTS:
+: Ian is missing the fun
+: Alice is learning how to use batch!
+: Lixi is missing the fun
+: Sushant is missing the fun
+
+You can also combine logical statements with ~&&~ and ~||~. 
+
+*** Some recommendations:
+ - Be mindful that you should keep spaces between the brackets and the logic statement in the ~if~
+   statements
+ - For definiing variable do not leave a space between the ~=~ and the variable value
+ - Write clean and indented code, it helps to readability (sorry for not doing it)
+
+** Bash scripting: writing scripts!  
+
+It's time to use all that we have learned! But first, let's talk about the structure of a bash
+script.
+
+1. Header: 
+
+Bash files (as all coding files, should include a shebang and a docstring (a /fancy/ term for
+documentation; you can comment bash files by using the pound: ~# This is a commment~). The shebang
+is a line that tells the interpreter (the middle-man between our code and the computer) which
+program should be used to run the code. 
+
+#+BEGIN_SRC bash :results output
+# This is a bash shebang:
+#! /bin/bash
+#! /bin/sh
+
+# This is a Python shebang:
+#! /usr/bin/python 
+#+END_SRC
+
+Here ~#!~ is telling the interpreter which program in the binaries of the system should use to read
+and execute the code (this path must be always absolute). After declaring the shebang, we need to
+tell other users (or your future self) what is the script doing. There is no common structure to
+follow, but in general a good documentation should include: name of the script (a general name), a
+good description with step-by-step processes, and the outcome. 
+
+2. Arguments
+
+Bash files, as any other scripts in other languages can take arguments. The arguments are defined as
+a variable (remember the ~$~) and a number that also determines the order of the arguments. For
+instance, let's create a bash file with the following contents and save it as ~im_awesome.sh~ 
+
+#+BEGIN_SRC bash :results output
+#! /bin/bash
+
+NAME=$1
+
+echo $NAME it's awesome!
+#+END_SRC
+
+2.1. File editing: we will use ~nano~ for now
+2.2. Permissions: to run a script file in Bash, you need to give excecution permissions, we can add
+those by using the `chmod` argument and appending executing powers: ~+x~ (hint: use ~ls -la~  to
+check file permissions in a directory). 
+
+Once the file is created we can run it: ~./im_awesome <your name>~, or another system variable:
+~./im_awesome $(whoami)~. 
+
+#+BEGIN_SRC bash :results output
+~/epic_dir/im_awesome.sh $(whoami)
+#+END_SRC
+
+#+RESULTS:
+: topcat it's awesome!
 
 
 
