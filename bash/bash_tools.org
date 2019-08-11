@@ -1,6 +1,5 @@
 #+TITLE: Bash and command-line tools
 #+AUTHOR: Ivan Higuera-Mendieta
-#+OPTIONS: H:1 num:t
 
 ** Why should I care? 
 
