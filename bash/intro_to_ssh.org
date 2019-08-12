@@ -56,6 +56,17 @@ servers.
 
 ** Sending/Receiving files
 
+One of the main differences between working remotely, instead of locally, is the file availability. While
+the file systems are equal, you cannot freely open any file that it is stored in a remote server.
+Thankfully, we can transfer files from/to over ~ssh~. 
+
+#+BEGIN_SRC bash :results output :exports both
+# Remote >>> Local
+scp -i <path to your .pem file> <user>@orientation-2019.cicala-projects.com:<remote path> <local path>
+# Local >>>> Remote
+scp <local path> -i <path to your .pem file> <user>@orientation-2019.cicala-projects.com:<remote path>
+#+END_SRC 
+
 ** Port forwarding
 
 
