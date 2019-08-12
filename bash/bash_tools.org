@@ -318,7 +318,7 @@ If we want to select only some columns, we can use the ~cut~ command. For exampl
 the report types and its timestamps:  
 
 *Warning*: I will follow a die-hard Unix way of doing this. As we will see later, some of these
-tasks are easily tackled by using a real scripting language (like :snake:).  
+tasks are easily tackled by using a real scripting language (like :snake:), or sometimes [[https://livefreeordichotomize.com/2019/06/04/using_awk_and_r_to_parse_25tb/][not]].  
 
 #+BEGIN_SRC bash :results output :exports both
 sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 2,8 | head 

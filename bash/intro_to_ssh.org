@@ -69,4 +69,51 @@ scp <local path> -i <path to your .pem file> <user>@orientation-2019.cicala-proj
 
 ** Port forwarding
 
+Remote connections do not only involve interacting with a remote terminal. Sometimes, we want to
+connect to remote resources, like a web server or a daemon. One common example of this is a Jupyter
+notebook. In a remote connection, you need to create a tunnel to funnel data from the remote port to
+your local port. How to do that? Well, let's try it
+
+#+BEGIN_SRC bash :results output :exports both
+ssh -NfL "$1":localhost:"$1" <user>@<remote_server>;
+#+END_SRC 
+
+
+*** Configuring your SSH connection:
+
+Sometimes passing many elements to ~ssh~ can be painstaking. One very good option is to create an
+~alias~ for our ~ssh~ connection: 
+
+#+BEGIN_SRC bash :results output :exports both
+# In your .bashrc or .bash_profile
+alias ssh_orientation="ssh -i <path to your .pem file> <user>@orientation-2019.cicala-projects.com"
+#+END_SRC 
+
+Or even a function:
+
+#+BEGIN_SRC bash :results output :exports both
+# In your .bashrc or .bash_profile
+local_jupyter() { ssh -NfL "$1":localhost:"$1" <user>@<remote_server>;} 
+#+END_SRC 
+
+After sourcing your configuration file, you can just type ~ssh_orientation~ to connect to your
+remote server, or type ~local_jupyter <port>~ to forwarding a port through ~ssh~. Despite being
+valid solutions, as all system-wide programs, ~ssh~ has a configuration file that can be used to
+simplify connections. Try to open ~.ssh/config~, if it does not exists, create it.
+
+#+BEGIN_SRC bash :results output :exports both
+# In your ~/.ssh/config
+Host <alias_name>                                   
+    HostName <host_domain>
+    User <user>
+    IdentityFile <path_to_pem_file>
+    LocalForward 9090 localhost:8080
+#+END_SRC 
+
+
+
+
+
+
+
 
