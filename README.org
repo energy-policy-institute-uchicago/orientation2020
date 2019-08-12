@@ -77,5 +77,5 @@ software in a more programmatic way.
 
 - MacOS users - [[file:./prerequisites/mac_homebrew.md][Instructions]]
 - Linux users - You probably know how to do this already
-- Windows - Change OS. 
+- Windows - Change OS :speak_no_evil:  
 

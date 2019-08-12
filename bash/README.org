@@ -1,0 +1,9 @@
+#+TITLE: Bash and terminal tutorials
+#+AUTHOR: Ivan Higuera-Mendieta
+
+Welcome to the Bash material! Here you will find all the big topics we will cover:
+ 1) Bash scripting 
+ 2) Terminal tips and customization
+ 3) Working in remote servers
+
+Some things might be only functional for MacOS :apple: 
