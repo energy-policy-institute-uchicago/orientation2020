@@ -24,8 +24,8 @@ for all sessions, time is limited and the material is extensive.
 | 11:00 - 12:00 AM | Hardware and Software Setup, Introduction to Servers           | SHFE 141        |
 | 12:00 - 1:00 PM  | Lunch with EPIC alumni (Quad club)                             | Quadrangle Club |
 | 1:00 - 2:30 PM   | Version control with Git                                       | SHFE 141        |
-| 2:30 - 4:00 PM   | *Group A:* Intro STATA Workshop and *Group B:* R & R, RSpatial | SHFE 141        |
-| 4:00 - midnight! | Fun time: Depart for Architecture Boat Cruise & Dinner         | -               |
+| 2:30 - 4:00 PM   | *Group A:* Intro STATA Workshop and *Group B:* R & RSpatial    | SHFE 141        |
+
 
 *Tuesday, August 13*
 
@@ -33,12 +33,12 @@ for all sessions, time is limited and the material is extensive.
 |------------------|----------------------------------------------|-----------------|
 | 9:00 - 10:00 AM  | Breakfast with Current Predocs: Life at EPIC | SHFE 141        |
 | 10:00 - 10:30 AM | Topics in Stata                              | SHFE 141        |
-| 10:30 - 11:00 AM | Bash and command-line tools                  | SHFE 141        |
 | 10:30 - 12:00 PM | Topics in Python: Multiprocessing            | SHFE 141        |
 | 12:00 - 1:00 PM  | Lunch with EPIC team                         | TBD             |
 | 1:00 - 2:00 PM   | SQL                                          | SHFE 141        |
 | 2:30 - 4:00 PM   | Project specific work                        | SHFE 141        |
 | 4:30 - 5:30 PM   | Working and Communicating with PIs           | Quadrangle Club |
+| 5:30 - ??        | Fun time: Depart for Architecture Boat Cruise & Dinner         | -               |
 
 
 ** Prerequisites
