@@ -318,7 +318,7 @@ If we want to select only some columns, we can use the ~cut~ command. For exampl
 the report types and its timestamps:  
 
 *Warning*: I will follow a die-hard unix way of doing this. As we will see later, some of these
-tasks are easily tackled by using a real scripting laguage (like:snake:).  
+tasks are easily tackled by using a real scripting laguage (like :snake:).  
 
 #+BEGIN_SRC bash :results output :exports both
 sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 2,8 | head 
@@ -505,7 +505,17 @@ You just edited a file using ~nano~. But Unix has better and more powerful text 
 session is too short for covering ~emacs~, but we can easily talk about ~vim~, a poweful text editor
 that can replace any IDE feature, and that will help you to write better code. 
 
-Let's open Vim by running ~vi~ or ~vim~ in your terminal. Once you open it, try to exit it ... :astonished: 
+Let's open Vim by running ~vi~ or ~vim~ in your terminal. Once you open it, try to exit it
+... :astonished:. To quit Vim you only need to go change to command mode by pressing the ~Esc~ key,
+and giving the quit command: ~:q~
 
+*** Modes:
+Vim has different interfaces called modes. When you open Vim, you will be in the ~COMMAND~ mode, where
+you can pass Vim functions (i.e. search and replace text). For text editing, you have to change to
+the ~INSERT~ mode. If you want to copy text, you can activate the ~VISUAL~ mode.
 
+You can activate Vim's different modes by using the following keys in the ~COMMAND~ mode:
+ - ~INSERT~ : Press the ~i~ key
+ - ~VISUAL~ : Press the ~v~ key, or use ~CTRL + v~ to use the ~VISUAL BLOCK~ mode
+ - ~COMMAND~: From any mode, just press the ~Esc~ key
 

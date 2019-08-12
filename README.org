@@ -17,15 +17,15 @@ for all sessions, time is limited and the material is extensive.
 
 *Monday, August 12*
 
-| Time             | Session                                                          | Location        |
-|------------------|------------------------------------------------------------------|-----------------|
-| 9:00 - 10:00 AM  | Welcome & Introduction                                           | SHFE 141        |
-| 10:00 - 11:00 AM | Bash and command-line tools                                      | SHFE 141        |
-| 11:00 - 12:00 AM | Hardware and Software Setup, Introduction to Servers             | SHFE 141        |
-| 12:00 - 1:00 PM  | Lunch with EPIC alumni (Quad club)                               | Quadrangle Club |
-| 1:00 - 2:30 PM   | Version control with Git                                         | SHFE 141        |
-| 2:30 - 4:00 PM   | <p>Group A:Intro STATA Workshop <br>Group B: R & R, RSpatial</p> | SHFE 141        |
-| 4:00 - midnight! | Fun time: Depart for Architecture Boat Cruise & Dinner           |  -              |
+| Time             | Session                                                   | Location        |
+|------------------+-----------------------------------------------------------+-----------------|
+| 9:00 - 10:00 AM  | Welcome & Introduction                                    | SHFE 141        |
+| 10:00 - 11:00 AM | Bash and command-line tools                               | SHFE 141        |
+| 11:00 - 12:00 AM | Hardware and Software Setup, Introduction to Servers      | SHFE 141        |
+| 12:00 - 1:00 PM  | Lunch with EPIC alumni (Quad club)                        | Quadrangle Club |
+| 1:00 - 2:30 PM   | Version control with Git                                  | SHFE 141        |
+| 2:30 - 4:00 PM   | Group A:Intro STATA Workshop<br> Group B: R & R, RSpatial | SHFE 141        |
+| 4:00 - midnight! | Fun time: Depart for Architecture Boat Cruise & Dinner    | -               |
 
 *Tuesday, August 13*
 
@@ -51,24 +51,25 @@ language.
 
 This is a comprehensive list of what we need to install:
 
- - Git (Install command-line tools in your MacOS) 
- - psql (PostgreSQL database client) 
- - Python (3.6+): 
+ + ~Git~ (Install [[http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/][command-line tools]] in your MacOS) 
+ + ~psql~ (PostgreSQL database client) 
+ + Python (3.6+): 
    -Python packages: 
-   - pandas 
-   - matplotlib 
-   - scikit-learn 
-   - sqlalchemy 
-   - psycopg2    
-   - ipython 
-   - jupyter 
- - R
- - RStudio
- - DBeaver (or DataGrip using your educational email) 
- - SublimeText (or PyCharm using your educational email) 
- - [If you're working on a server] Vim or if you feel with [lack of faith][2],
+   - ~pandas~ 
+   - ~xarray~
+   - ~matplotlib~
+   - ~scikit-learn~ 
+   - ~sqlalchemy~ 
+   - ~psycopg2~    
+   - ~ipython~ 
+   - ~jupyter~ 
+ + R
+ + [[https://www.rstudio.com][RStudio]]
+ + [[https://dbeaver.io][DBeaver]] (or [[https://www.jetbrains.com/datagrip/][DataGrip]] using your educational email) 
+ + [[https://www.sublimetext.com][SublimeText]] (or [[https://www.jetbrains.com/pycharm/][PyCharm]] using your educational email) 
+ + [If you're working on a server] Vim or if you feel with [[http://www.stallman.org/saint.html][lack of faith]],
    use Emacs. 
-
+   
 *** How to install
 
 Although you can install software using click-and-point, you can also install
