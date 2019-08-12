@@ -504,6 +504,22 @@ You just edited a file using ~nano~. But Unix has better and more powerful text 
 session is too short for covering ~emacs~, but we can easily talk about ~vim~, a powerful text editor
 that can replace any IDE feature, and that will help you to write better code. 
 
+ - *Why bother?* Vim is a powerful, lightweight, open-source, cross-platform text editor, that comes
+   pre-installed on Unix systems. Vi was written in 1976 by Bill Joy at Sun Microsystems, and has
+   been improved in 1991 to Vim. Vim was designed for maximum efficiency and minimum bandwidth when
+   working on old modems. It does not require use of the mouse or arrow keys. Much of learning Vim
+   is just habit and muscle memory, in the first place this can be frustrating, but soon becomes
+   second nature.  
+
+ - *But I'm scared?* Don't worry here are some useful hints, tips, and tricks for using Vim. Please
+   note if at any point during this session you feel bewildered, nauseous, or perhaps euphoric,
+   remain calm and press the ~Esc~ key to get back to normal.
+
+ - *Where should I start?* A comprehensive although slightly dry start point for learning vim is
+   through the vimtutor document available as standard with vim (just type ~vimtutor~ and hit
+   ~Enter~).  
+
+
 Let's open Vim by running ~vi~ or ~vim~ in your terminal. Once you open it, try to exit it
 ... :astonished:. To quit Vim you only need to go change to command mode by pressing the ~Esc~ key,
 and giving the quit command: ~:q~
@@ -518,6 +534,7 @@ You can activate Vim's different modes by using the following keys in the ~COMMA
  - ~VISUAL~ : Press the ~v~ key, or use ~CTRL + v~ to use the ~VISUAL BLOCK~ mode
  - ~COMMAND~: From any mode, just press the ~Esc~ key
 
+You can learn more about Vim in a [[https://vim-adventures.com/][fun maze game]] and using this Vim [[https://vim.rtorr.com][cheat sheet]].
 
 ** Task: 
 
