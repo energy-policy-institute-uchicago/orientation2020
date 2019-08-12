@@ -39,4 +39,23 @@ accept-ranges: bytes
 
 This is a successful connection (~HTTP 200~)! But we should talk about this? Well, the same concepts
 behind a request connection are in a connection to a remote server (kinda). Unix systems have a
-secure connection function: ~ssh~ to interact with servers.  
+secure connection function: ~ssh~ to interact with servers. Secure connections are made using
+different authentications. You just received a ~.pem~ key which authorize you to access our remote
+server.
+
+Your ~.pem~ file is a RSA key that identifies you as the user you are trying to connect in the
+server. This file must be kept in a secure place (Dropbox is not a secure place). Keys are not used
+by all servers (UChicago Midway uses email authentication) 
+
+#+BEGIN_SRC bash :results output :exports both
+ssh -i <path to your .pem file> <user>@orientation-2019.cicala-projects.com
+#+END_SRC 
+
+Once you are logged in, you can interact in a Linux terminal that is close to UChicago cluster
+servers. 
+
+** Sending/Receiving files
+
+** Port forwarding
+
+
