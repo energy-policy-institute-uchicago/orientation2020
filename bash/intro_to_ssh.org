@@ -1,8 +1,8 @@
-#+TITLE: A Introduction to SSH
+#+TITLE: A Introduction to SSH  :computer::earth_americas:
 #+AUTHOR: Ivan Higuera-Mendieta
 
-Real computing happen in servers :computer::earth_americas:. That is why we have to learn how to
-connect to remote computers. But before that, let's talk about the Internet. 
+Real computing happen in servers. That is why we have to learn how to connect to remote computers.
+But before that, let's talk about the Internet.  
 
 Every time we surf the web, either by procrastinating on Facebook, or doing some serious work, we
 are making requests to remote servers. Servers reply back to our requests by sending information
