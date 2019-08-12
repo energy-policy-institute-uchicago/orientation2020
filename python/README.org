@@ -1,0 +1,145 @@
+#+TITLE: Introduction to Python
+#+AUTHOR: Ivan Higuera-Mendieta
+
+** Python for Data Science 
+
+Python is a popular programming language for /data science/ since it is powerful, fast, extensible,
+runs everywhere, is easy to learn, highly readable, and is open. The following Python libraries are
+some of the most frequently used in data science projects: 
+
+- [[https://pandas.pydata.org][Pandas]] - powerful Python data structures and data analysis toolkit
+- [[https://www.numpy.org][Numpy]] - N-dimensional array for numerical computation
+- [[https://www.sqlalchemy.org][SQLAlchemy]] - SQL toolkit and Object Relational Mapper (ORM) that allows you to use SQL in Python
+- [[https://www.statsmodels.org/stable/index.html][StatsModels]] - statistical modeling package (good for econometrics)
+- [[https://scikit-learn.org/stable/][scikit-learn]] - machine learning library for the Python.
+- [[https://matplotlib.org][Matplotlib]] - 2D Plotting library for Python
+- [[https://seaborn.pydata.org][Seaborn]] - statistical graphics library for Python (prettier plots than matplotlib)
+- [[https://bokeh.pydata.org/en/latest/][Bokeh]]  - interactive web visualisation library
+- [[https://jupyter.org][Jupyter Notebook]] - web-based interactive computational environment for creating, executing, and visualising Jupyter notebooks.
+
+Concurrently managing and maintaining Python environments is going to be very important for your
+team's success, this allows you to collaborate and easily repliacte each others work. There are
+several approaches to managing environments in Python namely using `pip` and virtual environments or
+~conda~.  
+
+ - *Conda* is an open source, cross-platform, language-agnostic package manager and environment
+   management system that installs, runs, and updates packages and their dependencies.
+ - *Anaconda* uses Python and the conda python package management system bundled with ~ 150
+   scientific Python libraries.  
+ - *Miniconda* uses the conda package management system, without bundling in the Python libraries.   
+
+For your projects we recommend using Miniconda, and manually installing the required libraries
+within environments. These environments can be used to collaborate in teams, and keep for example
+different environments for development and production. This approach using Miniconda and conda
+environments saves on disk space and reduces the risk of package conflicts, and redundant packages. 
+
+** Adding Miniconda to PATH
+On your EC2 instances you will have Miniconda installed with Python 3.6 at the `/opt/` directory
+(for optional application software packages). Before we can discuss package management we have to
+add Miniconda to the `PATH` variable. 
+
+The `PATH` variable defines where the operating systems searches for executables. The path is stored
+in an environment variable, which is a named string maintained by the operating system. This
+variable contains information available to the command shell and other programs. So in the following
+commands we are telling the OS whereto find the Python files in the `/opt/` directories. 
+
+ - Further reading: [[https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard][Linux Filesystem Hierarchy Standard]] 
+
+** Package management with Conda
+
+Now let's see how to use virtual environments in Conda. Create yourself a virtual environment where
+you can install your own Python packages (change <venv> to your virtual environment name of choice -
+I suggest something short, like your initials, or your project initials): 
+
+*** Create a new environment
+
+#+BEGIN_SRC bash 
+conda create -n <venv>
+#+END_SRC
+
+*** Activate an existing environment
+
+#+BEGIN_SRC bash  
+source activate <virtual env name>
+#+END_SRC
+
+*** De-activate an environment
+
+#+BEGIN_SRC bash
+source deactivate
+#+END_SRC
+
+*** Install packages in the environment
+#+BEGIN_SRC bash 
+source activate <venv>
+conda install pandas
+#+END_SRC
+
+*** Check which packages are installed in the environment
+#+BEGIN_SRC bash
+conda list
+#+END_SRC
+
+*** Check which environments exist
+#+BEGIN_SRC bash 
+conda env list
+#+END_SRC
+
+*** Save current environment to a file
+
+#+BEGIN_SRC bash 
+conda env export > <filename.yml>
+#+END_SRC 
+
+*** Load environment from a file
+
+#+BEGIN_SRC bash  
+conda env create -f <filename.yml>
+#+END_SRC
+
+*** Remove an environment
+#+BEGIN_SRC bash 
+conda env remove -n <venv>
+#+END_SRC 
+
+*** For help using conda and it's functions look here
+#+BEGIN_SRC bash 
+conda help
+#+END_SRC
+
+*Please only install packages inside your own environment* This will ensure avoiding possible
+library conflicts. 
+
+Once you start coding, it will be important to maintain a shared list of Python packages required
+for your project (usually names ~requirements.txt~) With this file, someone else (a new  team
+member, a project partner, a future repo contributor) will be able to recreate a Conda environment
+on their machine with all the correct package versions to run your code, and avoid clashing with
+other packages they have already installed on their machine.
+
+*** Further reading:
+ - [[https://www.freecodecamp.org/news/why-you-need-python-environments-and-how-to-manage-them-with-conda-85f155f4353c/][Why you need Python environments and how to manage them with Conda]]
+ - [[http://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/][Conda: Myths and Misconceptions]]
+ - [[http://know.continuum.io/rs/387-XNW-688/images/conda-cheatsheet.pdf?mkt_tok=eyJpIjoiWkRJNU1UZzBOV0ptTnpsayIsInQiOiJ6K3VQQkhtSUMrcGxoSUwxd0IxTkxFWUxpa052UnVlak1FK1RMRm1kcWplN1pDdlZIbWZWUWFpTmtFTHFYK0gxRzRMb1c1K3ViZnBoa21yZjhzaUlUMzlxM1NpMGdRSHl1VlJTMHcyeWZvYz0ifQ%253D%253D][Conda environment cheat sheet]]
+
+**  How to connect Jupyter notebook to a remote instance (like Acropolis/Midway)
+This tutorial requires the use of Jupyter notebooks to document your work. We will run Jupyter on
+the instance (remotely), this requires port forwarding  as follows: 
+
+1) Connect to the remote: ~ssh -i <username>@<ip>~ (i.e. ~acropolis.uchicago.edu~)
+2) Run the following locally: ~ssh -i -NfL 8888:localhost:8888 <username>@<ip>~ This sets up an ssh
+   tunnel between a port on our machine and the port our Jupyter session is using on the remote
+   server. For those not familiar with ssh tunneling, we’ve just created a secure, encrypted
+   connection between port 8888 on our local machine and port 8888 on our remote server.  
+ - The ~-N~ flag tells ssh we won’t be running any remote processes using the connection. This is
+   useful for situations like this where all we want to do is port forwarding. 
+ - The ~-f~ runs ssh in the background, so we don’t need to keep a terminal session running just for
+   the tunnel. 
+ - The ~-L~ specifies that we will be forwarding a local port to a remote address and port. In this
+   case, we’re forwarding port 8888 on our machine to port 8888 on the remote server. The name
+   ~localhost~ just means /this computer/.
+3) Run the following remotely: ~jupyter notebook --no-browser --port 8888~ to launch a session 
+4) From the newly running session get the URL and paste it into your browser locally, it will look
+   something like this for example, but with a different token:
+~http://localhost:8888/?token=d9a1ffb999abde515c1d81b6c6fb3ff50d9cc08bbecbc58e~
+
+

@@ -1,0 +1,16 @@
+#+TITLE: A gentle introduction to SQL
+#+AUTHOR: Ivan Higuera Mendieta
+
+#+HEADER: :engine postgresql
+#+HEADER: :dbhost localhost
+#+HEADER: :dbuser newbies
+#+HEADER: :dbpassword 174Tl6rBBrohpgJ5BFsN4b7CnoGbxh
+#+HEADER: :database orientation2019
+#+HEADER: :cmdline -p9000
+#+BEGIN_SRC sql 
+select * from raw_data.station_history limit 10; 
+#+END_SRC
+
+#+RESULTS:
+|   |
+
