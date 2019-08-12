@@ -118,6 +118,34 @@ rm epic_dir/
 
 Remember to use ~--recursive~ or just ~-r~ when deleting or copying directories.
 
+
+One excellent function in Bash is the ~find~ program. It does not only allow to find for files
+across the whole system, but also gives options for running functions to a subset of files. 
+
+ #+BEGIN_SRC bash :results output :exports both
+# A basic search: all my sql files
+find ~/epic -name '*.sql' -type f 
+#+END_SRC 
+
+#+RESULTS:
+: /Users/topcat/epic/solar_data/data/ddl/table_schema_cb_2017_us_county_20m.shp.sql
+: /Users/topcat/epic/solar_data/data/ddl/table_schema_nsrdb_stations_meta.sql
+: /Users/topcat/epic/weather_isd_noaa/tutorials/crosswalk_stations_noaa.sql
+: /Users/topcat/epic/aerosol_modis/data/ddl/table_schema_cb_2017_us_county_20m.shp.sql
+: /Users/topcat/epic/aerosol_modis/data/ddl/table_schema_aqs_stations.sql
+
+ #+BEGIN_SRC bash :results output :exports both
+# A basic search: all my sql files
+find ~/epic -name '*.sql' -type f  -exec wc -l {} \;
+#+END_SRC 
+
+#+RESULTS:
+:     3237 /Users/topcat/epic/solar_data/data/ddl/table_schema_cb_2017_us_county_20m.shp.sql
+:       14 /Users/topcat/epic/solar_data/data/ddl/table_schema_nsrdb_stations_meta.sql
+:      129 /Users/topcat/epic/weather_isd_noaa/tutorials/crosswalk_stations_noaa.sql
+:     3237 /Users/topcat/epic/aerosol_modis/data/ddl/table_schema_cb_2017_us_county_20m.shp.sql
+:        7 /Users/topcat/epic/aerosol_modis/data/ddl/table_schema_aqs_stations.sql
+
 ** Basics: Piping and output redirection
 
 In bash we have some important concepts:
