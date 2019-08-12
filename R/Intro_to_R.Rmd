@@ -1,5 +1,5 @@
 ---
-title: "EPIC Orientation 2018: Introduction to R"
+title: "EPIC Orientation 2019: Introduction to R"
 date: "Updated: `r format(Sys.Date(), format = '%d %B %Y')`" 
 output:
   html_document:
@@ -53,18 +53,15 @@ You will encounter a variety of data structures in R:
 * #### vector
     + a one-dimensional array
     + elements of a vector must be of the same type
-      + `numeric <- c(0.1, 2.2. 4.678)`
-      + `integer <- c(5, 10, 100)`
+      + `numeric_vector <- c(0.1, 2, 4.678)`
       + `character <- c("EPIC", "is", "epic!")`
       + `logical <- c(T, F, T, T)`
-* #### factors
-    + special vectors that contain categorical values 
-    + nominal values as a vector of integers and an internal vector of character strings mapped to these integers
+      + factor: categorical variable with predefined set of possible values ("levels") and, optionally, a rank order. Looks like character strings, but internally, the levels are mapped to integers
 * #### matrix
-    + a special type of vector which has multiple dimensions 
+    + 2-D vector
     + all columns in a matrix must be of the same type (numeric, character, etc.) and the same length
 * #### dataframe
-    + more general than a matrix, different columns can have different modes (numeric, character, factor, etc.)
+    + more general than a matrix, different columns can have different types (numeric, character, factor, etc.)
 * #### list
     + an ordered collection of objects (components), a list allows you to gather (possibly unrelated) objects under one name (e.g. a string, a numeric vector, a matrix, and a scalar)  e.g. `mylist <- list("Hello", c(1,2,5.3,6,-2,4), matrix(1:20, nrow=5,ncol=4), 9)`
     + you can also make lists of lists e.g. `mylist <- list(list1, list2, list3)`
@@ -229,6 +226,8 @@ df %>%
 
 #### What is this `%>%` symbol?
 This is known as a **pipe operator**, which allows you to pipe the output from one function to the input of another function. This saves you from long, nested operations or doing a bunch of assignments. 
+
+`x %>% some_fn(...)` is equivalent to `some_fn(x,...)`
 
 Without the pipe operator, you could also execute the previous script with a long, nested operation (too confusing):
 ```{r}
