@@ -1,10 +1,10 @@
 * EPIC Pre-doctoral Fellows Orientation (August 2019)
 
-Welcome to EPIC! During this orientation we will brief you in about the tools we beleive will help
+Welcome to EPIC! During this orientation we will brief you in about the tools we believe will help
 you the most in your RAship at EPIC. We have prepared a set of 1 hour to 1.5 hours sessions about
-general programming topics and carreer and work environment talks. During this orientation you will
+general programming topics and career and work environment talks. During this orientation you will
 interact with both PIs, other pre-doctoral fellows, and current PhD students that will talk about
-their carrers and their overall experiences as EPIC pre-doctoral fellows. 
+their careers and their overall experiences as EPIC pre-doctoral fellows. 
 
 In this repo, you will have all the orientation materials, and some information related to your
 first days at EPIC.
@@ -12,20 +12,20 @@ first days at EPIC.
 ** Agenda
 
 EPIC orientation will take two days (Monday and Tuesday). Our sessions will take place at
-Saieh 141, except for some sessions in which you will be splitted in two groups. Please be on time
+Saieh 141, except for some sessions in which you will be split in two groups. Please be on time
 for all sessions, time is limited and the material is extensive.  
 
 *Monday, August 12*
 
-| Time             | Session                                                       | Location        |
-|------------------+---------------------------------------------------------------+-----------------|
-| 9:00 - 10:00 AM  | Welcome & Introduction                                        | SHFE 141        |
-| 10:00 - 11:00 AM | Bash and command-line tools                                   | SHFE 141        |
-| 11:00 - 12:00 AM | Hardware and Software Setup, Introduction to Servers          | SHFE 141        |
-| 12:00 - 1:00 PM  | Lunch with EPIC alumni (Quad club)                            | Quadrangle Club |
-| 1:00 - 2:30 PM   | Version control with Git                                      | SHFE 141        |
-| 2:30 - 4:00 PM   | *Group A:* Intro STATA Workshop<br>*Group B:* R & R, RSpatial | SHFE 141        |
-| 4:00 - midnight! | Fun time: Depart for Architecture Boat Cruise & Dinner        | -               |
+| Time             | Session                                                        | Location        |
+|------------------+----------------------------------------------------------------+-----------------|
+| 9:00 - 10:00 AM  | Welcome & Introduction                                         | SHFE 141        |
+| 10:00 - 11:00 AM | Bash and command-line tools                                    | SHFE 141        |
+| 11:00 - 12:00 AM | Hardware and Software Setup, Introduction to Servers           | SHFE 141        |
+| 12:00 - 1:00 PM  | Lunch with EPIC alumni (Quad club)                             | Quadrangle Club |
+| 1:00 - 2:30 PM   | Version control with Git                                       | SHFE 141        |
+| 2:30 - 4:00 PM   | *Group A:* Intro STATA Workshop and *Group B:* R & R, RSpatial | SHFE 141        |
+| 4:00 - midnight! | Fun time: Depart for Architecture Boat Cruise & Dinner         | -               |
 
 *Tuesday, August 13*
 
@@ -45,7 +45,7 @@ for all sessions, time is limited and the material is extensive.
 
 Before starting this orientation you will need some software first. We will guide you through the
 installation process (in Unix-based machines, hopefully). Also, some of the sessions are assuming some
-basic knowledge of programming languages. In general, you are expected to undertand object
+basic knowledge of programming languages. In general, you are expected to understand object
 structures (i.e. lists, dictionaries, matrices, etc.) and some experience in any programming
 language. 
 
@@ -73,7 +73,7 @@ This is a comprehensive list of what we need to install:
 *** How to install
 
 Although you can install software using click-and-point, you can also install
-software in a more programatic way. 
+software in a more programmatic way. 
 
 - MacOS users - [[file:./prerequisites/mac_homebrew.md][Instructions]]
 - Linux users - You probably know how to do this already
