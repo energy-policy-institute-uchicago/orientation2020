@@ -1,25 +1,23 @@
 #+TITLE: Bash and command-line tools
 #+AUTHOR: Ivan Higuera-Mendieta
-#+OPTIONS: H:2 toc:t num:t
 
 ** Why should I care? 
 
 Most of our coding life, we have worked in IDEs (i.e. RStudio, Stata, etc.) that have help us to
-simplfy most of our software development work. But sometimes IDEs are not configurable enough, we
+simplify most of our software development work. But sometimes IDEs are not configurable enough, we
 have to work on remote servers, or simply we need a more personalized space to work.
 
 Working in black (or white) terminals seems like a daunting place, but here we will learn how to
-feel confortable in the command-line, running basic scripts, and personalize our ~dotfiles~ to make
+feel comfortable in the command-line, running basic scripts, and personalize our ~dotfiles~ to make
 our terminal a nice place to live. 
 
 ** The ghost in the shell
 
-/Shell? Bash?/
-
-Computers run several tasks behind courtains. Nowadays, we use graphic interfaces (GUIs) for running
-tasks, read our email, and navigate the web. But graphic interfaces are nothing less than a
-mediator between us and the Shell, a program that runs other programms. *Bash* (Bourne Against
-Shell) is Unix shell, and it will be ubiquitous from now on (even Windows is using a Unix shell)
+/Shell? Bash?/ Computers run several tasks behind contains. Nowadays, we use graphic interfaces
+(GUI) for running tasks, read our email, and navigate the web. But graphic interfaces are nothing
+less than a mediator between us and the Shell, a program that runs other programs. *Bash* (Bourne
+Against Shell) is Unix shell, and it will be ubiquitous from now on (even Windows is using a Unix
+shell).
  
 
 ** Basics: where am I?
@@ -47,7 +45,7 @@ pwd
 : /Users/topcat/epic/orientation2019/bash
 
 Programs have options (and a lot of documentation), we can explore program options by using the
-~man~ command. Try ~man ls~. Some programs do not have any documentation, so check the internet for
+~man~ command. Try ~man ls~. Some programs do not have any documentation, so check the Internet for
 their documentation, or ~<command> --help~.  
 
 ** Basics: moving around tips
@@ -80,16 +78,16 @@ We can create new files and directories by using the mkdir and touch commands. L
 epic_dir directory, and then a text.txt file. 
 
 #+BEGIN_SRC bash
-mkdir epic_test_dir
-touch epic_dir/test.txt
+mkdir ~/epic_dir
+touch ~/epic_dir/test.txt
 #+END_SRC 
 
-Now check that the directroy and the file were creating by using ls. One common file tasks is
+Now check that the directory and the file were creating by using ls. One common file tasks is
 copying or moving files or directories. The mv and cp commands will help us with that. mv is
 able to move complete directories. Both commands allow you to rename the file in the new
 destination, or you can use . to use the same name. Check man cp for more on this.  
 
-Now check that the directroy and the file were creating by using ls. One common file tasks is
+Now check that the directory and the file were creating by using ls. One common file tasks is
 copying or moving files or directories. The mv and cp commands will help us with that. mv is
 able to move complete directories, but not cp.
 
@@ -103,12 +101,11 @@ cp epic_dir/test.txt test_copy.txt
 
 Let's assume that we do not need our recently created files anymore. The rm command will help us to
 delete files or directories. The use of rm is simple, but be careful! rm has big powers, and
-with a big power comes a big responsability. Deleted files by rm *cannot* be restored again.
+with a big power comes a big responsibility. Deleted files by rm *cannot* be restored again.
 
 #+BEGIN_SRC bash
 rm epic_dir/test.txt
 #+END_SRC 
-
 
 Now remove the directory with the same command. You should get an error:
 
@@ -120,6 +117,34 @@ rm epic_dir/
 : rm: epic_dir/: is a directory
 
 Remember to use ~--recursive~ or just ~-r~ when deleting or copying directories.
+
+
+One excellent function in Bash is the ~find~ program. It does not only allow to find for files
+across the whole system, but also gives options for running functions to a subset of files. 
+
+ #+BEGIN_SRC bash :results output :exports both
+# A basic search: all my sql files
+find ~/epic -name '*.sql' -type f 
+#+END_SRC 
+
+#+RESULTS:
+: /Users/topcat/epic/solar_data/data/ddl/table_schema_cb_2017_us_county_20m.shp.sql
+: /Users/topcat/epic/solar_data/data/ddl/table_schema_nsrdb_stations_meta.sql
+: /Users/topcat/epic/weather_isd_noaa/tutorials/crosswalk_stations_noaa.sql
+: /Users/topcat/epic/aerosol_modis/data/ddl/table_schema_cb_2017_us_county_20m.shp.sql
+: /Users/topcat/epic/aerosol_modis/data/ddl/table_schema_aqs_stations.sql
+
+ #+BEGIN_SRC bash :results output :exports both
+# A basic search: all my sql files
+find ~/epic -name '*.sql' -type f  -exec wc -l {} \;
+#+END_SRC 
+
+#+RESULTS:
+:     3237 /Users/topcat/epic/solar_data/data/ddl/table_schema_cb_2017_us_county_20m.shp.sql
+:       14 /Users/topcat/epic/solar_data/data/ddl/table_schema_nsrdb_stations_meta.sql
+:      129 /Users/topcat/epic/weather_isd_noaa/tutorials/crosswalk_stations_noaa.sql
+:     3237 /Users/topcat/epic/aerosol_modis/data/ddl/table_schema_cb_2017_us_county_20m.shp.sql
+:        7 /Users/topcat/epic/aerosol_modis/data/ddl/table_schema_aqs_stations.sql
 
 ** Basics: Piping and output redirection
 
@@ -137,15 +162,13 @@ In bash we have some important concepts:
 
 Let's see how to use it: 
 
-Download all the Integrated Surface Climate data from NOAA for the year 1990:
+Download all the [[https://www.ncdc.noaa.gov/isd][Integrated Surface Climate]] data from NOAA for the year 1990:
 
 #+BEGIN_SRC bash :exports both
-cd ~ 
-mkdir epic_dir
+mkdir ~/epic_dir
 cd epic_dir
 wget https://www.ncei.noaa.gov/data/global-hourly/archive/csv/1991.tar.gz
 #+END_SRC 
-
 
 We downloaded a new compressed file with the same name of the URL file (check ~man wget~ to check
 how to use a different name). To check the contents of our file, we can use the ~tar~ command to
@@ -240,7 +263,7 @@ ls ~/epic_dir/isd_data_1991 | grep '^62' | wc -l
 #+RESULTS:
 : 68
 
-Additionally, we can send all our types of ~STD~ ouputs to new files by using the redirection
+Additionally, we can send all our types of ~STD~ outputs to new files by using the redirection
 functions: ~>~ and ~>>~ (we will see another ones later). Once we print the list of stations of
 interest, is hard to copy and paste all the contents. We can save the results in a text file: 
 
@@ -296,7 +319,7 @@ assign the output to a new file, but this approach is cleaner (we do not create 
 We have other types of redirection commands, but we will talk about them during the scripting part
 of this tutorial. 
 
-** Text wranggling and editing
+** Text wrangling and editing
 
 Text editing is a big part of living in the command-line. Before checking how to write novels in our
 terminal, let's first explore how to do simpler stuff. We have lots of CSVs in out ~isd_data_1991~.
@@ -317,13 +340,13 @@ head -n 5  ~/epic_dir/isd_data_1991/01088099999.csv
 | 1088099999 | 1991-01-01T13:50:00 |      4 | 70.0666667 |     29.85 |      39.0 | VADSO, NO | FM-15       | ENVD      | V020            | 300,1,N,0051,1 | 22000,1,C,N | 011200,1,N,1 | -0100,1 | -0100,1 | 99999,9 | 2,999 | 03,1,+00180,9,07,9 |                    |     | 10091,1,99999,9 |      |     | MET008SEAFOG S | Q01+000000PRSWM2 |
 | 1088099999 | 1991-01-01T14:50:00 |      4 | 70.0666667 |     29.85 |      39.0 | VADSO, NO | FM-15       | ENVD      | V020            | 300,1,N,0041,1 | 22000,1,C,N | 011200,1,N,1 | -0100,1 | -0100,1 | 99999,9 | 2,000 | 04,1,+00180,9,07,9 |                    |     | 10091,1,99999,9 |      |     | MET008SEAFOG S | Q01+000000PRSWM2 |
 
-But, we can pre-process data from the command-line. Here `awk`, `cut`, and other tools are relevant:
+But, we can pre-process data from the command-line. Here ~awk~, ~cut~, and other tools are relevant:
 
 If we want to select only some columns, we can use the ~cut~ command. For example, let's get all
 the report types and its timestamps:  
 
-*Warning*: I will follow a die-hard unix way of doing this. As we will see later, some of these
-tasks are easily tackled by using a real scripting laguage (like snake:). 
+*Warning*: I will follow a die-hard Unix way of doing this. As we will see later, some of these
+tasks are easily tackled by using a real scripting language (like :snake:), or sometimes [[https://livefreeordichotomize.com/2019/06/04/using_awk_and_r_to_parse_25tb/][not]].  
 
 #+BEGIN_SRC bash :results output :exports both
 sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 2,8 | head 
@@ -346,11 +369,12 @@ sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 2,8
 
 Here we are combining several concepts: 
  - We are directing the CSV file to the ~sed~ command that will search all comma separators and
-   replace them by pipes: ~"|"~.
+   replace them by pipes: ~|~.
  - Later, we send that output to the ~cut~ command to filter out the columns of interest (2 and 8)
  - Print the head of the final output
 
-We can also check unique values by using ~uniq~.  
+We can also check unique values by using ~uniq~. In this case, we can answer the question for unique
+report types in this station in 1991.   
 
 #+BEGIN_SRC bash :results output :exports both
 sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 8 | uniq
@@ -360,10 +384,192 @@ sed 's/","/"|"/g' < ~/epic_dir/isd_data_1991/01001099999.csv | cut -d "|" -f 8 |
 : "REPORT_TYPE"
 : "FM-12"
 
+More advanced tasks in the command-line are available using ~awk~ or Python's ~csvkit~. The later is
+extremely useful as a simple program to interact with CSV files. ~csvkit~ can transform, aggregate,
+and query big data files without any hassle, you can check the [[https://csvkit.readthedocs.io/en/latest/index.html][documentation ]]to learn more about it.
+
+** Bash scripting: loops and conditionals 
+
+Bash is not a formal programming language, but it has several control flow features, and the ability
+of storing variables, just like any other language. Here we will explore two main control flows
+relevant for creating bash scripts: loops and conditionals.
+
+The definition of Bash variables is straight forward: ~var_name=var_content~. Variables are parsed
+as text, unless we specified otherwise. Variables will be stored in the session environment, and can
+be called again using the `$` sign before them: ~echo $varname~.
+
+Having defined the variable definition, we can talk about how to use loops: 
+
+#+BEGIN_SRC bash :results output :exports both
+names='Ian Alice Lixi Sushant'
+for name in $names
+do
+echo $name is learning how to use batch!
+done 
+#+END_SRC
+
+#+RESULTS:
+: Ian is learning how to use batch!
+: Alice is learning how to use batch!
+: Lixi is learning how to use batch!
+: Sushant is learning how to use batch!
+
+We can use ranges instead of variables to look (like ~range~ in Python). Ranges are defined using
+curly braces: ~{1..5}~ is a range from 1 to 5. Additionally, you can use a step: ~{1..10..2}~ will
+yield all multiples of 2 between 1 and 10. 
+
+Now let's jump in to if-statements. Bash has several logic operators:
+ 
+ - Variable comparison: ~=~ (equal), ~!=~ (different), ~-eq~ (numerically equal), ~-gt~ (>), ~-lt~ (<).
+ - Files: ~-d~ (directory exists), ~e~ (file exists). 
+
+Using our example above, we can print only a name we want:
+
+#+BEGIN_SRC bash :results output :exports both
+names='Ian Alice Lixi Sushant'
+for name in $names
+do
+if [ $name = 'Alice' ]
+then
+echo $name is learning how to use batch!
+fi
+done 
+#+END_SRC
+
+#+RESULTS:
+: Alice is learning how to use batch!
+
+Although this is a simple case, we can add also a ~else~ or ~elif~ statement: 
+
+#+BEGIN_SRC bash :results output :exports both
+names='Ian Alice Lixi Sushant'
+for name in $names
+do
+if [ $name = 'Alice' ]
+then
+echo $name is learning how to use batch!
+else
+echo $name is missing the fun
+fi
+done 
+#+END_SRC
+
+#+RESULTS:
+: Ian is missing the fun
+: Alice is learning how to use batch!
+: Lixi is missing the fun
+: Sushant is missing the fun
+
+You can also combine logical statements with ~&&~ and ~||~. 
+
+*** Some recommendations:
+ - Be mindful that you should keep spaces between the brackets and the logic statement in the ~if~
+   statements
+ - For definiing variable do not leave a space between the ~=~ and the variable value
+ - Write clean and indented code, it helps to readability (sorry for not doing it)
+
+** Bash scripting: writing scripts!  
+
+It's time to use all that we have learned! But first, let's talk about the structure of a bash
+script.
+
+*** Header: 
+
+Bash files (as all coding files, should include a shebang and a docstring (a /fancy/ term for
+documentation; you can comment bash files by using the pound: ~# This is a commment~). The shebang
+is a line that tells the interpreter (the middle-man between our code and the computer) which
+program should be used to run the code. 
+
+#+BEGIN_SRC bash :results output
+# This is a bash shebang:
+#! /bin/bash
+#! /bin/sh
+
+# This is a Python shebang:
+#! /usr/bin/python 
+#+END_SRC
+
+Here ~#!~ is telling the interpreter which program in the binaries of the system should use to read
+and execute the code (this path must be always absolute). After declaring the shebang, we need to
+tell other users (or your future self) what is the script doing. There is no common structure to
+follow, but in general a good documentation should include: name of the script (a general name), a
+good description with step-by-step processes, and the outcome. 
+
+*** Arguments
+
+Bash files, as any other scripts in other languages can take arguments. The arguments are defined as
+a variable (remember the ~$~) and a number that also determines the order of the arguments. For
+instance, let's create a bash file with the following contents and save it as ~im_awesome.sh~ 
+
+#+BEGIN_SRC bash :results output
+#! /bin/bash
+
+NAME=$1
+
+echo $NAME it's awesome!
+#+END_SRC
+
+ - File editing:  we will use ~nano~ for now
+ - Permissions: to run a script file in Bash, you need to give execution permissions, we can add
+   those by using the  `chmod` argument and appending executing powers: ~+x~ (hint: use ~ls -la~ to
+   check file permissions in a directory).  
+
+Once the file is created we can run it: ~./im_awesome <your name>~, or another system variable:
+~./im_awesome $(whoami)~. 
+
+#+BEGIN_SRC bash :results output
+~/epic_dir/im_awesome.sh $(whoami)
+#+END_SRC
+
+#+RESULTS:
+: topcat it's awesome!
+
+And congratulations! +1: you have just run your first bash files (at least in this course). 
+
+** Text editing 
+
+You just edited a file using ~nano~. But Unix has better and more powerful text editors. This
+session is too short for covering ~emacs~, but we can easily talk about ~vim~, a powerful text editor
+that can replace any IDE feature, and that will help you to write better code. 
+
+ - *Why bother?* Vim is a powerful, lightweight, open-source, cross-platform text editor, that comes
+   pre-installed on Unix systems. Vi was written in 1976 by Bill Joy at Sun Microsystems, and has
+   been improved in 1991 to Vim. Vim was designed for maximum efficiency and minimum bandwidth when
+   working on old modems. It does not require use of the mouse or arrow keys. Much of learning Vim
+   is just habit and muscle memory, in the first place this can be frustrating, but soon becomes
+   second nature.  
+
+ - *But I'm scared?* Don't worry here are some useful hints, tips, and tricks for using Vim. Please
+   note if at any point during this session you feel bewildered, nauseous, or perhaps euphoric,
+   remain calm and press the ~Esc~ key to get back to normal.
+
+ - *Where should I start?* A comprehensive although slightly dry start point for learning vim is
+   through the vimtutor document available as standard with vim (just type ~vimtutor~ and hit
+   ~Enter~).  
 
 
+Let's open Vim by running ~vi~ or ~vim~ in your terminal. Once you open it, try to exit it
+... :astonished:. To quit Vim you only need to go change to command mode by pressing the ~Esc~ key,
+and giving the quit command: ~:q~
 
+*** Modes:
+Vim has different interfaces called modes. When you open Vim, you will be in the ~COMMAND~ mode, where
+you can pass Vim functions (i.e. search and replace text). For text editing, you have to change to
+the ~INSERT~ mode. If you want to copy text, you can activate the ~VISUAL~ mode.
 
+You can activate Vim's different modes by using the following keys in the ~COMMAND~ mode:
+ - ~INSERT~ : Press the ~i~ key
+ - ~VISUAL~ : Press the ~v~ key, or use ~CTRL + v~ to use the ~VISUAL BLOCK~ mode
+ - ~COMMAND~: From any mode, just press the ~Esc~ key
 
+You can learn more about Vim in a [[https://vim-adventures.com/][fun maze game]] and using this Vim [[https://vim.rtorr.com][cheat sheet]].
 
+** Task: 
+
+Using what you learnt during this session and the complete 1991 NOAA's ISD data, answer the
+following questions:
+ 
+ 1) Get all the different report types. The results must be a text file with all the report types.
+ 2) Get the different report types for station's codes starting in 20 and 00 and append it to the
+    previous text file adding some lines to split the data. 
 

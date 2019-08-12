@@ -1,0 +1,119 @@
+#+TITLE: A Introduction to SSH  :computer::earth_americas:
+#+AUTHOR: Ivan Higuera-Mendieta
+
+Real computing happen in servers. That is why we have to learn how to connect to remote computers.
+But before that, let's talk about the Internet.  
+
+Every time we surf the web, either by procrastinating on Facebook, or doing some serious work, we
+are making requests to remote servers. Servers reply back to our requests by sending information
+over the HTTP (or HTTPS if they like security), and explorers translate that to human language:
+
+We can check the header of a requests to [[https://duckduckgo.com][DuckDuckGo]] (you can print the HTML code by passing the ~iX~
+option to curl). 
+
+#+BEGIN_SRC bash :exports both :results output
+curl -I https://duckduckgo.com 
+#+END_SRC  
+
+#+RESULTS:
+#+begin_example
+HTTP/2 200 
+server: nginx
+date: Mon, 12 Aug 2019 04:13:24 GMT
+content-type: text/html; charset=UTF-8
+content-length: 5398
+vary: Accept-Encoding
+etag: "5d506dd7-1516"
+strict-transport-security: max-age=31536000
+x-frame-options: SAMEORIGIN
+content-security-policy: default-src https: blob: data: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'
+x-xss-protection: 1;mode=block
+x-content-type-options: nosniff
+referrer-policy: origin
+expect-ct: max-age=0
+expires: Mon, 12 Aug 2019 04:13:23 GMT
+cache-control: no-cache
+accept-ranges: bytes
+
+#+end_example
+
+This is a successful connection (~HTTP 200~)! But we should talk about this? Well, the same concepts
+behind a request connection are in a connection to a remote server (kinda). Unix systems have a
+secure connection function: ~ssh~ to interact with servers. Secure connections are made using
+different authentications. You just received a ~.pem~ key which authorize you to access our remote
+server.
+
+Your ~.pem~ file is a RSA key that identifies you as the user you are trying to connect in the
+server. This file must be kept in a secure place (Dropbox is not a secure place). Keys are not used
+by all servers (UChicago Midway uses email authentication) 
+
+#+BEGIN_SRC bash :results output :exports both
+ssh -i <path to your .pem file> <user>@orientation-2019.cicala-projects.com
+#+END_SRC 
+
+Once you are logged in, you can interact in a Linux terminal that is close to UChicago cluster
+servers. 
+
+** Sending/Receiving files
+
+One of the main differences between working remotely, instead of locally, is the file availability. While
+the file systems are equal, you cannot freely open any file that it is stored in a remote server.
+Thankfully, we can transfer files from/to over ~ssh~. 
+
+#+BEGIN_SRC bash :results output :exports both
+# Remote >>> Local
+scp -i <path to your .pem file> <user>@orientation-2019.cicala-projects.com:<remote path> <local path>
+# Local >>>> Remote
+scp <local path> -i <path to your .pem file> <user>@orientation-2019.cicala-projects.com:<remote path>
+#+END_SRC 
+
+** Port forwarding
+
+Remote connections do not only involve interacting with a remote terminal. Sometimes, we want to
+connect to remote resources, like a web server or a daemon. One common example of this is a Jupyter
+notebook. In a remote connection, you need to create a tunnel to funnel data from the remote port to
+your local port. How to do that? Well, let's try it
+
+#+BEGIN_SRC bash :results output :exports both
+ssh -NfL "$1":localhost:"$1" <user>@<remote_server>;
+#+END_SRC 
+
+
+*** Configuring your SSH connection:
+
+Sometimes passing many elements to ~ssh~ can be painstaking. One very good option is to create an
+~alias~ for our ~ssh~ connection: 
+
+#+BEGIN_SRC bash :results output :exports both
+# In your .bashrc or .bash_profile
+alias ssh_orientation="ssh -i <path to your .pem file> <user>@orientation-2019.cicala-projects.com"
+#+END_SRC 
+
+Or even a function:
+
+#+BEGIN_SRC bash :results output :exports both
+# In your .bashrc or .bash_profile
+local_jupyter() { ssh -NfL "$1":localhost:"$1" <user>@<remote_server>;} 
+#+END_SRC 
+
+After sourcing your configuration file, you can just type ~ssh_orientation~ to connect to your
+remote server, or type ~local_jupyter <port>~ to forwarding a port through ~ssh~. Despite being
+valid solutions, as all system-wide programs, ~ssh~ has a configuration file that can be used to
+simplify connections. Try to open ~.ssh/config~, if it does not exists, create it.
+
+#+BEGIN_SRC bash :results output :exports both
+# In your ~/.ssh/config
+Host <alias_name>                                   
+    HostName <host_domain>
+    User <user>
+    IdentityFile <path_to_pem_file>
+    LocalForward 9090 localhost:8080
+#+END_SRC 
+
+
+
+
+
+
+
+
