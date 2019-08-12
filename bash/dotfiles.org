@@ -47,7 +47,39 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 Although all environment variables live in the ~.bash_profile~, you can ~source~ a file with all
 your environment configuration. By default, MacOS will export automatically all variables in the
-~~/.profile~ file, so you can store yours there.  
+~/Users/<your user>/.profile~ file, so you can store yours there.  
+
+** Window managers
+
+Terminal sessions can have several windows! Terminal screen partitions are extremely useful when
+working in the terminal. Partitions do not only allow you to write code, while running other tasks,
+but also, -in the context of remote connections- allow you to keep remote processes alive, even when
+the connection is interrupted. 
+
+Unix offers two window managers: ~screen~ and ~tmux~. The latter is newer and more flexible, but
+~screen~ is also a good alternative. 
+
+#+BEGIN_SRC bash :results output :exports both 
+# Start a tmux session
+tmux 
+# List existing tmux sessions
+tmux ls 
+#+END_SRC
+
+Both ~tmux~ and ~screen~ have a prefix key to pass commands. In ~tmux~ this prefix is ~CTRL + B~ by
+default. So to pass commands to ~tmux~ we should pass the prefix and the command key afterwards. For
+instance: 
+
+ #+BEGIN_SRC bash :results output :exports both 
+# Split windows horizontally into two
+Ctrl+b+"
+# Split windows vertically into two 
+Ctrl+b+%
+#+END_SRC
+
+For a more complete reference of ~tmux~ commands, you can check [[https://thoughtbot.com/blog/migrating-from-screen-to-tmux][this]] blog post. As any other
+system-wide program, ~tmux~ has a configuration file (~.tmux.conf~) where you can change several
+behaviors and key-bindings (a good idea is to remap the prefix to be ~CTRL + A~). 
 
 ** Recommended configuration: 
 

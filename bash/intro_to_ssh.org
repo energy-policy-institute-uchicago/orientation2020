@@ -1,0 +1,42 @@
+#+TITLE: A Introduction to SSH
+#+AUTHOR: Ivan Higuera-Mendieta
+
+Real computing happen in servers :computer::earth_americas:. That is why we have to learn how to
+connect to remote computers. But before that, let's talk about the Internet. 
+
+Every time we surf the web, either by procrastinating on Facebook, or doing some serious work, we
+are making requests to remote servers. Servers reply back to our requests by sending information
+over the HTTP (or HTTPS if they like security), and explorers translate that to human language:
+
+We can check the header of a requests to [[https://duckduckgo.com][DuckDuckGo]] (you can print the HTML code by passing the ~iX~
+option to curl). 
+
+#+BEGIN_SRC bash :exports both :results output
+curl -I https://duckduckgo.com 
+#+END_SRC  
+
+#+RESULTS:
+#+begin_example
+HTTP/2 200 
+server: nginx
+date: Mon, 12 Aug 2019 04:13:24 GMT
+content-type: text/html; charset=UTF-8
+content-length: 5398
+vary: Accept-Encoding
+etag: "5d506dd7-1516"
+strict-transport-security: max-age=31536000
+x-frame-options: SAMEORIGIN
+content-security-policy: default-src https: blob: data: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'
+x-xss-protection: 1;mode=block
+x-content-type-options: nosniff
+referrer-policy: origin
+expect-ct: max-age=0
+expires: Mon, 12 Aug 2019 04:13:23 GMT
+cache-control: no-cache
+accept-ranges: bytes
+
+#+end_example
+
+This is a successful connection (~HTTP 200~)! But we should talk about this? Well, the same concepts
+behind a request connection are in a connection to a remote server (kinda). Unix systems have a
+secure connection function: ~ssh~ to interact with servers.  
