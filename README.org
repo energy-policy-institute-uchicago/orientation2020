@@ -33,7 +33,6 @@ for all sessions, time is limited and the material is extensive.
 |------------------|----------------------------------------------|-----------------|
 | 9:00 - 10:00 AM  | Breakfast with Current Predocs: Life at EPIC | SHFE 141        |
 | 10:00 - 10:30 AM | Topics in Stata                              | SHFE 141        |
-| 10:30 - 11:00 AM | Bash and command-line tools                  | SHFE 141        |
 | 10:30 - 12:00 PM | Topics in Python: Multiprocessing            | SHFE 141        |
 | 12:00 - 1:00 PM  | Lunch with EPIC team                         | TBD             |
 | 1:00 - 2:00 PM   | SQL                                          | SHFE 141        |
