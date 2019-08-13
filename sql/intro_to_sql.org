@@ -258,3 +258,56 @@ create index station_id_data on raw_data.daily_station_basic_data (id);
 
 Index creation takes time, but it is time that it will save us on each of our queries. 
 
+** JOINS (in space!)
+
+PostgreSQL comes with a powerful GIS extension based on the great GEOS. [[https://postgis.net][PostGIS]] has many functions
+based in a binary storing that make spatial search faster. Let's see an example with out station
+data. 
+
+ #+HEADER: :engine postgresql
+#+HEADER: :dbhost localhost
+#+HEADER: :dbuser newbies
+#+HEADER: :dbpassword 174Tl6rBBrohpgJ5BFsN4b7CnoGbxh
+#+HEADER: :database orientation2019
+#+HEADER: :cmdline -p9000
+#+BEGIN_SRC sql 
+
+with stations as (
+    select station_id,
+           lat,
+           lon,
+           name,
+           st_transform(
+               st_setsrid(
+                   st_makepoint(lon, lat), 4326), 4269) as geom_point
+    from raw_data.daily_station_inventory
+), spatial_join as (
+    select s.station_id,
+           s.name,
+           s.lat,
+           s.lon,
+           g.geoid,
+           g.name as county_name
+    from stations s
+             join us_geoms_raw_data.cb_2017_us_county_20m g
+                  on st_contains(g.geom, s.geom_point)
+) select * from spatial_join
+limit 10;  
+#+END_SRC
+
+#+RESULTS:
+| station_id  | name              |     lat |      lon | geoid | county_name       |
+|-------------+-------------------+---------+----------+-------+-------------------|
+| AR000087803 | SQUEL AERO        |  42.933 |   -71.15 | 33015 | Rockingham        |
+| ARM00087800 | L BOLSON          |  41.943 |  -71.532 | 44007 | Providence        |
+| ARM00087814 | ASO DE INDIOS     |  43.817 |  -68.883 | 23013 | Knox              |
+| BLM00085242 | UAN MENDOZA       |  17.963 |  -67.076 | 72079 | Lajas             |
+| CA005020881 | MERSON AUTO       |    49.0 | -97.2333 | 38067 | Pembina           |
+| CA005020882 | MERSON AUT        |    49.0 | -97.2333 | 38067 | Pembina           |
+| CA006020559 | ARWICK            | 48.6333 | -93.9667 | 27071 | Koochiching       |
+| CA006022010 | EVLIN             | 48.5167 |   -93.75 | 27071 | Koochiching       |
+| CA006026853 | AINY RIVER        | 48.7667 | -94.6667 | 27077 | Lake of the Woods |
+| CA00602FQ5L | AINY RIVER-COOPER | 48.7333 | -94.6167 | 27077 | Lake of the Woods |
+
+
+Wow! That was fast! 
