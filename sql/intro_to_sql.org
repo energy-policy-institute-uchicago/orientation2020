@@ -1,6 +1,13 @@
 #+TITLE: A gentle introduction to SQL
 #+AUTHOR: Ivan Higuera Mendieta
 
+Let's explore the SQL functionalities! 
+
+** SELECT:
+
+To select columns, SQL allows to grab user-defined columns with ~SELECT~. You can also use ~*~ as a
+wildcard to select all columns in the table
+
 #+HEADER: :engine postgresql
 #+HEADER: :dbhost localhost
 #+HEADER: :dbuser newbies
@@ -12,5 +19,242 @@ select * from raw_data.station_history limit 10;
 #+END_SRC
 
 #+RESULTS:
-|   |
+|   USAF |  WBAN | STATION NAME | CTRY | STATE | ICAO |     LAT |      LON | ELEV(M) |    BEGIN |      END |
+|--------+-------+--------------+------+-------+------+---------+----------+---------+----------+----------|
+| 007018 | 99999 | WXPOD 7018   |      |       |      | +00.000 | +000.000 | +7018.0 | 20110309 | 20130730 |
+| 007026 | 99999 | WXPOD 7026   | AF   |       |      | +00.000 | +000.000 | +7026.0 | 20120713 | 20170822 |
+| 007070 | 99999 | WXPOD 7070   | AF   |       |      | +00.000 | +000.000 | +7070.0 | 20140923 | 20150926 |
+| 008260 | 99999 | WXPOD8270    |      |       |      | +00.000 | +000.000 | +0000.0 | 20050101 | 20100731 |
+| 008268 | 99999 | WXPOD8278    | AF   |       |      | +32.950 | +065.567 | +1156.7 | 20100519 | 20120323 |
+| 008307 | 99999 | WXPOD 8318   | AF   |       |      | +00.000 | +000.000 | +8318.0 | 20100421 | 20100421 |
+| 008411 | 99999 | XM20         |      |       |      |         |          |         | 20160217 | 20160217 |
+| 008414 | 99999 | XM18         |      |       |      |         |          |         | 20160216 | 20160217 |
+| 008415 | 99999 | XM21         |      |       |      |         |          |         | 20160217 | 20160217 |
+| 008418 | 99999 | XM24         |      |       |      |         |          |         | 20160217 | 20160217 |
+
+
+** WHERE:
+
+Select rows that are True for a logical statement:
+
+#+HEADER: :engine postgresql
+#+HEADER: :dbhost localhost
+#+HEADER: :dbuser newbies
+#+HEADER: :dbpassword 174Tl6rBBrohpgJ5BFsN4b7CnoGbxh
+#+HEADER: :database orientation2019
+#+HEADER: :cmdline -p9000
+#+BEGIN_SRC sql 
+select * from raw_data.station_history  where "CTRY" = 'US' limit 10; 
+#+END_SRC
+
+#+RESULTS:
+|   USAF |  WBAN | STATION NAME       | CTRY | STATE | ICAO |     LAT |      LON | ELEV(M) |    BEGIN |      END |
+|--------+-------+--------------------+------+-------+------+---------+----------+---------+----------+----------|
+| 621010 | 99999 | MOORED BUOY        | US   |       |      | +50.600 | -002.933 | -0999.0 | 20080721 | 20080721 |
+| 621110 | 99999 | MOORED BUOY        | US   |       |      | +58.900 | -000.200 | -0999.0 | 20041118 | 20041118 |
+| 621130 | 99999 | MOORED BUOY        | US   |       |      | +58.400 | +000.300 | -0999.0 | 20040726 | 20040726 |
+| 621160 | 99999 | MOORED BUOY        | US   |       |      | +58.100 | +001.800 | -0999.0 | 20040829 | 20040829 |
+| 621170 | 99999 | MOORED BUOY        | US   |       |      | +57.900 | +000.100 | -0999.0 | 20040726 | 20040726 |
+| 621220 | 99999 | MOORED BUOY        | US   |       |      | +56.500 | +002.017 | -0999.0 | 20040801 | 20040801 |
+| 621250 | 99999 | MOORED BUOY        | US   |       |      | +53.800 | -003.800 | -0999.0 | 20081204 | 20081204 |
+| 621260 | 99999 | MOORED BUOY        | US   |       |      | +53.800 | -003.600 | -0999.0 | 20041030 | 20041101 |
+| 621300 | 99999 | MOORED BUOY        | US   |       |      | +53.000 | +001.700 | -0999.0 | 20041110 | 20041110 |
+| 621370 | 99999 | PLATFORM NO. 62137 | US   |       |      | +57.350 | +001.467 | +0000.0 | 20040726 | 20040726 |
+
+You can add several logic statements with ~AND~
+
+#+HEADER: :engine postgresql
+#+HEADER: :dbhost localhost
+#+HEADER: :dbuser newbies
+#+HEADER: :dbpassword 174Tl6rBBrohpgJ5BFsN4b7CnoGbxh
+#+HEADER: :database orientation2019
+#+HEADER: :cmdline -p9000
+#+BEGIN_SRC sql 
+select * from raw_data.station_history  where "CTRY" = 'US' and "STATION NAME" ~ 'CHICAGO' limit 10; 
+#+END_SRC
+
+#+RESULTS:
+|   USAF |  WBAN | STATION NAME                         | CTRY | STATE | ICAO |     LAT |      LON | ELEV(M) |    BEGIN |      END |
+|--------+-------+--------------------------------------+------+-------+------+---------+----------+---------+----------+----------|
+| 724958 | 99999 | PORT CHICAGO                         | US   | CA    |      | +38.030 | -122.030 | +0012.0 | 19750916 | 19960607 |
+| 725300 | 94846 | CHICAGO O'HARE INTERNATIONAL AIRPORT | US   | IL    | KORD | +41.995 | -087.934 | +0201.8 | 19461001 | 20190722 |
+| 725337 | 04807 | GARY/CHICAGO AIRPORT                 | US   | IN    | KGYY | +41.617 | -087.417 | +0180.1 | 20060101 | 20190722 |
+| 725337 | 99999 | GARY CHICAGO                         | US   | IN    | KGYY | +41.617 | -087.400 | +0180.0 | 19810126 | 20051231 |
+| 725340 | 14819 | CHICAGO MIDWAY INTL ARPT             | US   | IL    | KMDW | +41.786 | -087.752 | +0186.5 | 19730101 | 20190722 |
+| 725344 | 99999 | CHICAGO / CALUMET COAST GUARD ST     | US   |       |      | +41.720 | -087.530 | +0180.0 | 19940303 | 19960630 |
+| 725346 | 94866 | CHICAGO/MEIGS                        | US   | IL    | KCGX | +41.867 | -087.600 | +0181.0 | 19730101 | 20080618 |
+| 725346 | 99999 | CHICAGO/MEIGS                        | US   | IL    | KCGX | +41.867 | -087.600 | +0181.0 | 20000101 | 20030409 |
+| 725347 | 99999 | CHICAGO/WAUKEGAN                     | US   | IL    | KUGN | +42.417 | -087.867 | +0222.0 | 19890421 | 20051231 |
+| 994034 | 99999 | PORT CHICAGO                         | US   | CA    |      | +38.057 | -122.038 | +0002.0 | 20080101 | 20190722 |
+
+
+** GROUP BY
+
+If we want to aggregate data by any set of columns and get summary data, we can use ~GROUP BY~. SQL
+has also powerful functions for aggregation, like ~WINDOW FUNCTIONS~ (like a ~group_by~ without
+~summarize~ in R).  
+
+#+HEADER: :engine postgresql
+#+HEADER: :dbhost localhost
+#+HEADER: :dbuser newbies
+#+HEADER: :dbpassword 174Tl6rBBrohpgJ5BFsN4b7CnoGbxh
+#+HEADER: :database orientation2019
+#+HEADER: :cmdline -p9000
+#+BEGIN_SRC sql 
+select "CTRY", count(*) as number_stations
+from raw_data.station_history 
+group by "CTRY" 
+limit 10; 
+#+END_SRC
+
+#+RESULTS:
+| CTRY | number_stations |
+|------+-----------------|
+| RQ   |              39 |
+| KS   |             199 |
+| FK   |              14 |
+| EN   |              37 |
+| FG   |               6 |
+| OD   |              14 |
+| PN   |               2 |
+| SN   |               5 |
+| SI   |              56 |
+| KR   |              16 |
+
+There is a large number of functions for aggregation. Let's explore a new dataset for this. We have
+all the 2019 daily measurements for our stations. The data is massive, and even probably too large
+for our small database (this database has 1 core and 4 GB RAM). 
+
+#+HEADER: :engine postgresql
+#+HEADER: :dbhost localhost
+#+HEADER: :dbuser newbies
+#+HEADER: :dbpassword 174Tl6rBBrohpgJ5BFsN4b7CnoGbxh
+#+HEADER: :database orientation2019
+#+HEADER: :cmdline -p9000
+#+BEGIN_SRC sql 
+select id,
+       max("TMAX"/10) as temp_max,
+       min("TMIN"/10) as temp_min
+from raw_data.daily_station_basic_data
+group by id
+limit 10;
+#+END_SRC
+
+#+RESULTS:
+| id          |            temp_max |               temp_min |
+|-------------+---------------------+------------------------|
+| AE000041196 | 45.9000000000000000 |     7.0000000000000000 |
+| AEM00041194 | 46.6000000000000000 |    14.0000000000000000 |
+| AEM00041217 | 47.0000000000000000 |    11.3000000000000000 |
+| AEM00041218 | 48.7000000000000000 |    10.1000000000000000 |
+| AFM00040938 | 44.4000000000000000 |    -8.6000000000000000 |
+| AFM00040948 | 32.1000000000000000 |    -5.0000000000000000 |
+| AFM00040990 | 44.2000000000000000 |    -3.5000000000000000 |
+| AG000060390 | 23.1000000000000000 | 0.00000000000000000000 |
+| AG000060590 | 26.2000000000000000 |    -4.8000000000000000 |
+| AG000060611 | 23.3000000000000000 |    -2.7000000000000000 |
+
+** JOINS
+
+One of the main advantages of SQL is the ability of ~JOIN~'ing data across the database. There are
+multiple ways of doing this, but here we will only cover the basics
+
+#+HEADER: :engine postgresql
+#+HEADER: :dbhost localhost
+#+HEADER: :dbuser newbies
+#+HEADER: :dbpassword 174Tl6rBBrohpgJ5BFsN4b7CnoGbxh
+#+HEADER: :database orientation2019
+#+HEADER: :cmdline -p9000
+#+BEGIN_SRC sql 
+select i.station_id,
+       i.lat,
+       i.lon,
+       i.name,
+       d.date,
+       d."TMAX",
+       d."TMIN"
+from raw_data.daily_station_basic_data d 
+left join raw_data.daily_station_inventory i 
+on(i.station_id = d.id)
+limit 10
+#+END_SRC
+
+#+RESULTS:
+| station_id  |    lat |    lon | name               |     date | TMAX | TMIN |
+|-------------+--------+--------+--------------------+----------+------+------|
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190101 |  269 |  140 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190102 |  265 |  137 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190103 |  294 |      |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190104 |      |  159 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190105 |      |      |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190106 |  272 |  129 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190107 |  280 |  139 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190108 |  275 |  141 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190109 |  292 |  138 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190110 |  262 |  164 |
+
+
+*** SQL Coding concept: CTE's
+
+We can concatenate different queries (or Common Table Expressions). Just as any regular query, a CTE
+has a ~WITH~ statement that allows SQL to track it by a name, let's see an example: 
+
+#+HEADER: :engine postgresql
+#+HEADER: :dbhost localhost
+#+HEADER: :dbuser newbies
+#+HEADER: :dbpassword 174Tl6rBBrohpgJ5BFsN4b7CnoGbxh
+#+HEADER: :database orientation2019
+#+HEADER: :cmdline -p9000
+#+BEGIN_SRC sql 
+with joined_data as (
+    select i.station_id,
+           i.lat,
+           i.lon,
+           i.name,
+           d.date,
+           d."TMAX",
+           d."TMIN"
+    from raw_data.daily_station_basic_data d
+             left join raw_data.daily_station_inventory i
+                       on (i.station_id = d.id)
+)
+select * from joined_data
+limit 10
+#+END_SRC
+
+#+RESULTS:
+| station_id  |    lat |    lon | name               |     date | TMAX | TMIN |
+|-------------+--------+--------+--------------------+----------+------+------|
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190101 |  269 |  140 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190102 |  265 |  137 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190103 |  294 |      |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190104 |      |  159 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190105 |      |      |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190106 |  272 |  129 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190107 |  280 |  139 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190108 |  275 |  141 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190109 |  292 |  138 |
+| AE000041196 | 25.333 | 55.517 | HARJAH INTER. AIRP | 20190110 |  262 |  164 |
+
+So here, we created a "temporary" table (there are real temporary table, no this is a non-official
+temporary table) called ~joined_data~, that we used later to create a new query. We can use as many
+as we want of these! 
+
+*** SQL Conding concept: Indexes:  
+
+As stated in the introduction, table indexes work like book indices, but for the machine. We can
+make querying faster by creating an index of the most common used column. Here we will define a
+basic index using the ~id~ column:
+
+#+HEADER: :engine postgresql
+#+HEADER: :dbhost localhost
+#+HEADER: :dbuser newbies
+#+HEADER: :dbpassword 174Tl6rBBrohpgJ5BFsN4b7CnoGbxh
+#+HEADER: :database orientation2019
+#+HEADER: :cmdline -p9000
+#+BEGIN_SRC sql 
+create index station_id_data on raw_data.daily_station_basic_data (id);
+#+END_SRC
+
+Index creation takes time, but it is time that it will save us on each of our queries. 
 

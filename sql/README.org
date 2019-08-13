@@ -1,0 +1,140 @@
+#+TITLE: Why SQL?
+#+AUTHOR: Ivan Higuera-Mendieta
+
+In the case of small data (you can load it all into memory), simple analysis (maps well to your
+statistical package of choice), and no plans for you or anyone else to repeat your analysis (nor
+receive updated data), then keeping your data in text files, and using a scripting language like
+Python or R to work with it, is fine. 
+
+In the case that you have a large amount of diverse data (cannot all be loaded into memory) that may
+be updated, or if you want to share your data with others and let others easily reproduce your
+analysis, then use a DBMS (Database Management System). DBMS are important for storing, organizing,
+managing and analyzing data. They mitigate the scaling and complexity problem of increasing data in
+volume and diversity. DBMS facilitate a data model that allows data to be stored, queried, and
+updated efficiently and concurrently by multiple users. In general, as a data scientist your toolkit
+will involve using SQL (Structured Query Language) with a database and something else--python, R,
+SAS, Stata, SPSS. This tutorial covers the basics of relational databases, focusing solely on the
+[[https://www.postgresql.org][PostgreSQL]] SQL distribution.
+
+** Intro to DBMSs
+
+Database Management Systems provide storage, access, and backup for data processing. Data storage is
+centered around /normalization/, which means complete integrity and comparability of data sources
+across rows. There are some basic elements that we will introduce here, but certainly, there is also
+relevant concepts that are out of the scope of this document.  
+
+ - /Table/: In a relational database tables are a set of data elements organized in rows and columns.
+   They do not differ from other data structures in the wild (like any CSV file).
+ - /Schema/: There are two types of schemas: logical, and physical. Both are used extensively in the
+   day-to-day as a data scientist. The first type, refers to a blueprint of our information (also
+   known as DDL), which contains all the constrains of our data. The second, is a container for
+   information that makes data storage more organized.  
+ - /Relation/: All things are relational in our RBMS, specially in Relational Databases, such as
+   SQL. A relation can be defined as an attribute that links two data sources, and it takes many
+   shapes in our work. 
+ - /Data types/: As many other languages, SQL (and PostgreSQL) have a series of data types that
+   define the table columns, this is fairly similar to other languages. 
+ - /Query/: A data question :smiley:.  
+ - /Indexes/: Is a data structure that improves the speed of data operations. It literally creates a
+   data index of a table to optimize the search operations. 
+
+
+** Data Input
+
+PostgreSQL is a /client-server/ service that operates with a /client/ (called ~psql~), and a remote
+(can be local) server that stores and executes the data queries. In our setup we have something like
+this: 
+
+#+CAPTION: Client/Server Database using a SSH tunnel
+#+NAME: client_server
+[[../imgs/client_server.png]]
+
+
+*** Test connection:
+If you haven't install ~psql~, you can do it using Homebrew or apt-get. Once you do that, you can
+type: 
+
+#+BEGIN_SRC bash
+# You can save the URL as a environment variable
+psql postgresql://your_host:your_password@db_host:db_port/orientation2019
+#+END_SRC 
+
+*** Create DDL for desired data (each file must have its own DDL): 
+As described above, we need a data blueprint to build our tables, that's part of the /"S"/ in SQL.
+Blueprints allow the database to create a structure for data and know what to expect from each file.
+You can create this manually by using this SQL code: 
+
+#+BEGIN_SRC sql
+CREATE TABLE <schema_name>.<table_name> AS(
+COL_NAME <data_type> <constrain>,
+(...)
+);
+#+END_SRC 
+
+But you can use some tools to make your life easier. ~csvkit~ and the function ~csv2sql~ can read
+one part of the data and build the DDL for you. Let's see the NOAA station example: 
+
+Download the data: 
+#+BEGIN_SRC bash
+curl -O https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
+#+END_SRC
+
+Explore it:
+#+BEGIN_SRC bash
+head ~/ghcnd-stations.txt
+#+END_SRC
+
+#+RESULTS:
+| ACW00011604 | 17.1167 | -61.7833 |   10.1 | ST           | JOHNS   | COOLIDGE |   FLD |       |
+| ACW00011647 | 17.1333 | -61.7833 |   19.2 | ST           | JOHNS   |          |       |       |
+| AE000041196 |  25.333 |   55.517 |   34.0 | SHARJAH      | INTER.  |     AIRP |   GSN | 41196 |
+| AEM00041194 |  25.255 |   55.364 |   10.4 | DUBAI        | INTL    |    41194 |       |       |
+| AEM00041217 |  24.433 |   54.651 |   26.8 | ABU          | DHABI   |     INTL | 41217 |       |
+| AEM00041218 |  24.262 |   55.609 |  264.9 | AL           | AIN     |     INTL | 41218 |       |
+| AF000040930 |  35.317 |   69.017 | 3366.0 | NORTH-SALANG | GSN     |    40930 |       |       |
+| AFM00040938 |   34.21 |   62.228 |  977.2 | HERAT        | 40938   |          |       |       |
+| AFM00040948 |  34.566 |   69.212 | 1791.3 | KABUL        | INTL    |    40948 |       |       |
+| AFM00040990 |    31.5 |    65.85 | 1010.0 | KANDAHAR     | AIRPORT |    40990 |       |       |
+
+Before uploading data to our database, we need to clean some things. We can use Python for that (we
+can also use Bash, but this file is harder to clean there).
+
+#+BEGIN_SRC python
+ghcnd_stations = pd.read_fwf('~/ghcnd-stations.txt', 
+colspecs=[(0, 11), (13, 20), (22, 30), (32, 37), (39, 40), (42, 71), (73, 75), (77, 79), (81, 85)], 
+names=['station_id', 'lat', 'lon', 'elev', 'state', 'name', 'gsn_flag', 'hcn_flag', 'wmo_id'])
+#+END_SRC
+
+Once the file is clean, we can save it as a CSV file and use ~csv2sql~ to create our DDL :sparkles::sparkles::sparkles:
+
+#+BEGIN_SRC bash  
+cat  ghcdn_stations_clean.csv | csvsql --tables daily_station_inventory --db-schema raw_data -i postgresql >> daily_station_inventory.sql
+#+END_SRC 
+
+Let's see it!
+
+#+BEGIN_SRC bash :results output 
+cat ~/daily_station_inventory.sql
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+CREATE TABLE raw_data.daily_station_inventory (
+	station_id VARCHAR NOT NULL, 
+	lat DECIMAL NOT NULL, 
+	lon DECIMAL NOT NULL, 
+	elev DECIMAL NOT NULL, 
+	state VARCHAR, 
+	name VARCHAR, 
+	gsn_flag VARCHAR, 
+	hcn_flag VARCHAR, 
+	wmo_id DECIMAL
+);
+#+end_example
+
+#+BEGIN_SRC bash  
+cat ghcdn_stations_clean.csv | psql $DBURLNEWBIES -c "\copy raw_data.daily_station_inventory from stdin with csv header delimiter ','"
+#+END_SRC 
+
+And /voila!/ Data is in our database! 
+
