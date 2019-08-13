@@ -19,7 +19,7 @@ some of the most frequently used in data science projects:
 
 Concurrently managing and maintaining Python environments is going to be very important for your
 team's success, this allows you to collaborate and easily repliacte each others work. There are
-several approaches to managing environments in Python namely using `pip` and virtual environments or
+several approaches to managing environments in Python namely using ~pip~ and virtual environments or
 ~conda~.  
 
  - *Conda* is an open source, cross-platform, language-agnostic package manager and environment
