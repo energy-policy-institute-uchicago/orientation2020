@@ -200,6 +200,7 @@ head(dplyr::select(df, Date, CNN), 3)
 ```{r}
 #create a new column called BBC.and.CNN and display just the first 3 rows
 head(mutate(df, BBC.and.CNN=BBC.News+CNN), 3)
+df$CNN.plus.BBC <- NULL
 ```
 `rename()` allows you to rename variables.
 ```{r}
@@ -244,7 +245,7 @@ test <- summarise(test, mean.coverage = mean(CNN))
 ```
 
 ### Quiz 2: 
-Using a combination of the functions we've covered, find out the average coverage of MSNBC for each hurricane, only include hurricanes where damage costs were above 10 million. Remember to use the pipe operator :D
+Using a combination of the functions we've covered, find out the max coverage of MSNBC for each hurricane, only include hurricanes where damage costs were above 10 million, and arrange by the max coverage. Remember to use the pipe operator :D
 
 ```{r}
 df %>%
