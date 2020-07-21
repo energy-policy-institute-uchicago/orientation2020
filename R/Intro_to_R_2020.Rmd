@@ -1,14 +1,15 @@
 ---
-title: "EPIC Orientation 2018: Introduction to R"
+title: 'EPIC Orientation 2020: Introduction to R'
+github_document: default
 date: "Updated: `r format(Sys.Date(), format = '%d %B %Y')`" 
 output:
   html_document:
-    theme: default
     highlight: zenburn
+    theme: default
   md_document: default
+  pdf_document: default
   variant: markdown_github
-github_document: default
-number_sections: true
+number_sections: yes
 ---
 
 ## Overview
