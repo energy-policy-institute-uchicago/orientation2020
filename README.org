@@ -15,6 +15,8 @@ related to your first days at EPIC.
 
 The orientation will span two weeks. Our main and TA sessions will take place
 virtually (Zoom links will be shared later). You can find this year's agenda [[./imgs/orientation_agenda.pdf][here]].
+
+Videos from the Session I can be found [[https://www.dropbox.com/sh/h0qkneeglmrkg3z/AACdYaJd8cCD-Ufmfp07zBjia?dl=0][here]]
 		
 ** Prerequisites
 
